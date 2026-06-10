@@ -28,8 +28,8 @@ export const SOCIAL_LINKS: Social[] = [
 		icon: 'simple-icons:bilibili',
 	},
 	{
-		name: 'Email',
-		url: 'mailto:fffreol999@gmail.com',
-		icon: 'ph:envelope-duotone',
+		name: 'YouTube',
+		url: 'https://youtube.com/@RIMECHU',
+		icon: 'ph:youtube-logo-duotone',
 	},
 ];
