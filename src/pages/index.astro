@@ -129,13 +129,19 @@ const t = useTranslations(lang);
                         </div>
                     </div>
                     <script>
-                        document.getElementById('video-poster').addEventListener('click', function() {
-                            var poster = this;
-                            var player = document.getElementById('video-player');
-                            poster.style.display = 'none';
-                            player.style.display = 'block';
-                            player.innerHTML = '<iframe src="https://www.youtube.com/embed/JUchy1KSLOI?autoplay=1" frameborder="0" allowfullscreen allow="autoplay; fullscreen; clipboard-write; encrypted-media; gyroscope; picture-in-picture" style="position:absolute;inset:0;width:100%;height:100%;border:none;" loading="lazy"></iframe>';
-                        });
+                        // Event delegation — survives ClientRouter SPA navigations
+                        if (!window.__videoPosterBound) {
+                            window.__videoPosterBound = true;
+                            document.addEventListener('click', function(e) {
+                                var poster = e.target.closest('#video-poster');
+                                if (!poster) return;
+                                var player = document.getElementById('video-player');
+                                if (!player) return;
+                                poster.style.display = 'none';
+                                player.style.display = 'block';
+                                player.innerHTML = '<iframe src="https://www.youtube.com/embed/JUchy1KSLOI?autoplay=1" frameborder="0" allowfullscreen allow="autoplay; fullscreen; clipboard-write; encrypted-media; gyroscope; picture-in-picture" style="position:absolute;inset:0;width:100%;height:100%;border:none;" loading="lazy"></iframe>';
+                            });
+                        }
                     </script>
                 </div>
             </div>
