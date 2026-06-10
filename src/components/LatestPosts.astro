@@ -1,7 +1,7 @@
 ---
 /**
  * LatestPosts Component
- * Displays latest blog posts
+ * Displays latest blog posts with refined card styling
  */
 
 import FormattedDate from './FormattedDate.astro';
@@ -18,34 +18,173 @@ interface Props {
 const { posts, lang } = Astro.props;
 ---
 
-<div class="flex flex-col gap-3 post-list">
-		{posts.map((post) => (
-			<a 
-				href={lang ? getRelativeLocaleUrl(lang, `/blog/${getPostBaseId(post)}/`) : `/blog/${getPostBaseId(post)}/`}
-				class="flex flex-col gap-2 p-3 border border-accent/40 text-white transition-all duration-150 hover:bg-primary/12.5 hover:border-primary focus-visible:outline-none focus-visible:bg-primary/12.5 focus-visible:border-primary"
-			>
-				<div class="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-1">
-					<h3 class="text-sm font-semibold text-foreground m-0">{post.data.title}</h3>
-					<time class="text-xs text-foreground/70 shrink-0">
-						<FormattedDate date={post.data.pubDate} lang={lang} />
-					</time>
+<div class="post-list">
+	{posts.map((post, i) => (
+		<a
+			href={lang ? getRelativeLocaleUrl(lang, `/blog/${getPostBaseId(post)}/`) : `/blog/${getPostBaseId(post)}/`}
+			class="post-card"
+		>
+			<div class="post-card-header">
+				<h3 class="post-card-title">{post.data.title}</h3>
+				<time class="post-card-date">
+					<FormattedDate date={post.data.pubDate} lang={lang} />
+				</time>
+			</div>
+			{post.data.description && (
+				<p class="post-card-desc">
+					{stripMarkdown(post.data.description)}
+				</p>
+			)}
+			{post.data.tags && post.data.tags.length > 0 && (
+				<div class="post-card-tags">
+					{post.data.tags.slice(0, 3).map(tag => (
+						<span class="post-tag">{tag}</span>
+					))}
 				</div>
-				{post.data.description && (
-					<p class="text-xs text-foreground/70 m-0 leading-relaxed">
-						{stripMarkdown(post.data.description)}
-					</p>
-				)}
-			</a>
-		))}
+			)}
+			<span class="post-card-arrow">→</span>
+		</a>
+	))}
 </div>
 
 <style>
-	/* Scoped style to prevent underline on post links */
-	.post-list a {
-		text-decoration: none;
+	.post-list {
+		display: flex;
+		flex-direction: column;
+		gap: 0.5rem;
 	}
-	
-	.post-list a:hover {
+
+	.post-card {
+		display: flex;
+		align-items: center;
+		gap: 0.75rem;
+		padding: 0.85rem 1rem;
 		text-decoration: none;
+		border: 1px solid color-mix(in srgb, var(--color-foreground) 10%, transparent);
+		border-radius: 10px;
+		background: color-mix(in srgb, var(--color-background) 98%, transparent);
+		transition: all 0.2s ease;
+		position: relative;
+		overflow: hidden;
+	}
+
+	.post-card::before {
+		content: '';
+		position: absolute;
+		inset: 0;
+		border-radius: inherit;
+		background: linear-gradient(135deg,
+			color-mix(in srgb, var(--color-primary) 0%, transparent) 0%,
+			color-mix(in srgb, var(--color-primary) 3%, transparent) 100%);
+		opacity: 0;
+		transition: opacity 0.25s ease;
+	}
+
+	.post-card:hover {
+		border-color: color-mix(in srgb, var(--color-primary) 40%, transparent);
+		transform: translateX(4px);
+		box-shadow: 0 2px 12px color-mix(in srgb, var(--color-primary) 8%, transparent);
+	}
+
+	.post-card:hover::before {
+		opacity: 1;
+	}
+
+	.post-card:focus-visible {
+		outline: none;
+		border-color: var(--color-primary);
+		box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-primary) 25%, transparent);
+	}
+
+	.post-card-header {
+		flex: 1;
+		min-width: 0;
+		display: flex;
+		flex-direction: column;
+		gap: 0.2rem;
+		position: relative;
+		z-index: 1;
+	}
+
+	@media (min-width: 640px) {
+		.post-card-header {
+			flex-direction: row;
+			justify-content: space-between;
+			align-items: baseline;
+			gap: 0.75rem;
+		}
+	}
+
+	.post-card-title {
+		margin: 0;
+		font-size: 0.875rem;
+		font-weight: 600;
+		font-family: var(--font-sans, sans-serif);
+		color: var(--color-foreground);
+		line-height: 1.4;
+		transition: color 0.2s ease;
+	}
+
+	.post-card:hover .post-card-title {
+		color: var(--color-primary);
+	}
+
+	.post-card-date {
+		font-size: 0.7rem;
+		color: color-mix(in srgb, var(--color-foreground) 45%, transparent);
+		font-family: var(--font-mono, monospace);
+		white-space: nowrap;
+		flex-shrink: 0;
+	}
+
+	.post-card-desc {
+		margin: 0.35rem 0 0;
+		font-size: 0.78rem;
+		font-family: var(--font-sans, sans-serif);
+		color: color-mix(in srgb, var(--color-foreground) 60%, transparent);
+		line-height: 1.5;
+		display: -webkit-box;
+		-webkit-line-clamp: 2;
+		-webkit-box-orient: vertical;
+		overflow: hidden;
+		position: relative;
+		z-index: 1;
+	}
+
+	.post-card-tags {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.35rem;
+		margin-top: 0.5rem;
+		position: relative;
+		z-index: 1;
+	}
+
+	.post-tag {
+		display: inline-block;
+		padding: 0.1rem 0.45rem;
+		font-size: 0.65rem;
+		font-family: var(--font-mono, monospace);
+		color: color-mix(in srgb, var(--color-primary) 80%, transparent);
+		background: color-mix(in srgb, var(--color-primary) 8%, transparent);
+		border: 1px solid color-mix(in srgb, var(--color-primary) 15%, transparent);
+		border-radius: 999px;
+	}
+
+	.post-card-arrow {
+		flex-shrink: 0;
+		font-size: 0.9rem;
+		color: color-mix(in srgb, var(--color-foreground) 20%, transparent);
+		opacity: 0;
+		transform: translateX(-6px);
+		transition: all 0.25s ease;
+		position: relative;
+		z-index: 1;
+	}
+
+	.post-card:hover .post-card-arrow {
+		opacity: 1;
+		transform: translateX(0);
+		color: var(--color-primary);
 	}
 </style>

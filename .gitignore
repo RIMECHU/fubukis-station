@@ -28,3 +28,9 @@ pnpm-debug.log*
 
 # jetbrains setting folder
 .idea/
+
+# Tencent Cloud EdgeOne
+.env
+.edgeone/*
+.tef_dist/*
+  
