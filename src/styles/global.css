@@ -1,0 +1,868 @@
+/* Import Tailwind CSS v4 */
+@import "tailwindcss";
+
+
+/* Legacy Theme CSS Variables (for backward compatibility only) */
+:root {
+	/* Primary color - Spectre purple */
+	--theme-primary: #8c5cf5;
+	--theme-primary-rgb: 140, 92, 245;
+	--theme-primary-light: #a277ff;
+	--theme-primary-lightest: #c2a8fd;
+	
+	/* Background and foreground - Dark theme */
+	--theme-background: #0a0a0a;
+	--theme-foreground: #ffffff;
+	--theme-foreground-secondary: #c7c7c7;
+	
+	/* Borders and separators */
+	--theme-border: #353535;
+	--theme-separator: #353535;
+	
+	/* Semantic colors */
+	--theme-accent: var(--color-primary);
+	--theme-link: var(--color-primary-light);
+	
+	/* Legacy variables for compatibility */
+	--accent: var(--color-primary);
+	--accent-dark: #6b3fd4;
+}
+
+/* Tailwind v4 Theme Configuration */
+@theme {
+	/* Map legacy theme colors to Tailwind utilities (for backward compatibility) */
+	--color-primary: var(--theme-primary);
+	--color-primary-light: var(--theme-primary-light);
+	--color-primary-lightest: var(--theme-primary-lightest);
+	--color-background: var(--theme-background);
+	--color-foreground: var(--theme-foreground);
+	--color-accent: var(--theme-accent);
+	--color-link: var(--theme-link);
+	
+	/* Font families - Tailwind v4 syntax */
+	--font-sans: Geist, ui-sans-serif, system-ui, sans-serif;
+	--font-mono: GeistMono, ui-monospace, 'SFMono-Regular', Monaco, 'Cascadia Code', 'Segoe UI Mono', 'Courier New', monospace;
+	
+	/* Box shadows for glow effects */
+	--shadow-glow-sm: 0 0 2px var(--color-primary);
+	--shadow-glow: 0 0 4px var(--color-primary);
+	--shadow-glow-md: 0 0 8px var(--color-primary);
+	--shadow-glow-lg: 0 0 12px var(--color-primary);
+	--shadow-glow-xl: 0 0 16px var(--color-primary);
+	
+	/* Drop shadows for text glow */
+	--drop-shadow-glow: drop-shadow(0 0 4px var(--color-primary));
+	--drop-shadow-glow-lg: drop-shadow(0 0 12px var(--color-primary));
+	
+	/* Animations */
+	--animate-fade-in: fade-in 150ms ease-in;
+	--animate-slide-in: slide-in 150ms ease-out;
+}
+
+/* Font faces - Geist from Spectre */
+@font-face {
+	font-family: "Geist";
+	src: url("/fonts/Geist.woff2") format("woff2");
+	font-weight: 100 900;
+	font-style: normal;
+	font-display: swap;
+}
+@font-face {
+	font-family: "GeistMono";
+	src: url("/fonts/GeistMono.woff2") format("woff2");
+	font-weight: 100 900;
+	font-style: normal;
+	font-display: swap;
+}
+
+/* Keyframes for animations */
+@keyframes fade-in {
+	0% { opacity: 0; }
+	100% { opacity: 1; }
+}
+
+@keyframes slide-in {
+	0% { transform: translateY(-10px); opacity: 0; }
+	100% { transform: translateY(0); opacity: 1; }
+}
+
+/* Base styles - Tailwind v4 doesn't require @layer for base styles */
+body {
+	@apply font-sans bg-background text-foreground;
+	margin: 0;
+	padding: 0;
+	text-align: left;
+	word-wrap: break-word;
+	overflow-wrap: break-word;
+	line-height: 1.7;
+	font-size: 18px;
+	-webkit-font-smoothing: antialiased;
+}
+
+/* Blog post layout helpers */
+.blog-post-main {
+	width: calc(100% - 2em);
+	max-width: 100%;
+	margin: 0 auto;
+}
+
+/* Blog post with ToC layout */
+.blog-post-main-with-toc {
+	width: 100%;
+	max-width: 100%;
+	margin: 0 auto;
+	padding: 0;
+}
+
+@media (min-width: 768px) {
+	.blog-post-main-with-toc {
+		width: calc(100% - 2em);
+		padding: 0 1em;
+	}
+}
+
+@media (min-width: 1280px) {
+	.blog-post-main-with-toc {
+		display: flex;
+		gap: 2rem;
+		align-items: flex-start;
+	}
+	
+	.blog-article-wrapper {
+		flex: 1;
+		min-width: 0;
+	}
+}
+
+.blog-post-hero {
+	width: 100%;
+}
+
+.blog-post-hero img {
+	display: block;
+	margin: 0 auto;
+	border-radius: 12px;
+	box-shadow: var(--shadow-glow-md);
+}
+
+.blog-post-prose {
+	width: 100%;
+	max-width: 100%;
+	margin: auto;
+	padding: 0.5rem;
+	color: var(--color-foreground);
+	font-size: 0.925rem;
+	line-height: 1.6;
+}
+
+@media (min-width: 640px) {
+	.blog-post-prose {
+		padding: 1rem;
+	}
+}
+
+@media (min-width: 768px) {
+	.blog-post-prose {
+		width: 720px;
+		max-width: calc(100% - 2em);
+	}
+}
+
+@media (min-width: 1280px) {
+	.blog-post-prose {
+		width: 100%;
+		max-width: 720px;
+	}
+}
+
+.blog-post-title {
+	margin-bottom: 1em;
+	padding: 1em 0;
+	text-align: center;
+	line-height: 1;
+}
+
+.blog-post-title h1 {
+	margin: 0 0 0.5em 0;
+}
+
+.blog-post-date {
+	margin-bottom: 0.5em;
+	color: color-mix(in srgb, var(--color-foreground) 70%, transparent);
+}
+
+.blog-post-last-updated {
+	font-style: italic;
+}
+
+/* Removed fixed width constraint - now handled per-page */
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+	@apply text-foreground;
+	/* Use browser default sizes and margins */
+}
+
+/* ===================================
+   MultiTerm-inspired Prose Styles
+   =================================== */
+
+/* Prose container for blog posts and markdown content */
+.prose {
+	font-size: 1rem;
+	line-height: 1.75;
+	
+	/* Inline code styling */
+	code:not(pre code) {
+		font-size: 0.875rem;
+		background: color-mix(in srgb, var(--color-foreground) 5%, transparent);
+		padding: 0.25rem 0.5rem;
+		border-radius: 0.5rem;
+		white-space: nowrap;
+		color: color-mix(in srgb, var(--color-foreground) 90%, transparent);
+	}
+	
+	/* Headings with markdown-style prefixes */
+	h1,
+	h2,
+	h3,
+	h4,
+	h5,
+	h6 {
+		margin-top: 1.5rem;
+		margin-bottom: 1.5rem;
+		font-weight: 600;
+	}
+	
+	h1 a,
+	h2 a,
+	h3 a,
+	h4 a,
+	h5 a,
+	h6 a {
+		text-decoration: none;
+		color: inherit;
+	}
+	
+	h1 {
+		font-size: 1.875rem; /* text-3xl */
+		margin-top: 2rem; /* mt-8 */
+		color: var(--color-primary-light);
+	}
+	
+	h1::before {
+		content: '#';
+		margin-right: 0.5rem;
+	}
+	
+	h2 {
+		font-size: 1.5rem; /* text-2xl */
+		margin-top: 3rem; /* mt-12 */
+		color: color-mix(in srgb, var(--color-primary-light) 70%, var(--color-primary-lightest) 30%);
+	}
+	
+	h2::before {
+		content: '##';
+		margin-right: 0.5rem;
+	}
+	
+	h3 {
+		font-size: 1.25rem; /* text-xl */
+		margin-top: 2.5rem; /* mt-10 */
+		color: var(--color-primary-lightest);
+	}
+	
+	h3::before {
+		content: '###';
+		margin-right: 0.5rem;
+	}
+	
+	h4 {
+		font-size: 1.125rem; /* text-lg */
+		margin-top: 2rem; /* mt-8 */
+		color: color-mix(in srgb, var(--color-foreground) 70%, var(--color-primary-lightest) 30%);
+	}
+	
+	h4::before {
+		content: '####';
+		margin-right: 0.5rem;
+	}
+	
+	h5 {
+		font-size: 1rem; /* text-base */
+		margin-top: 1.5rem; /* mt-6 */
+		color: color-mix(in srgb, var(--color-foreground) 85%, var(--color-primary-lightest) 15%);
+	}
+	
+	h5::before {
+		content: '#####';
+		margin-right: 0.5rem;
+	}
+	
+	h6 {
+		font-size: 1rem; /* text-base */
+		margin-top: 1.5rem; /* mt-6 */
+		color: color-mix(in srgb, var(--color-foreground) 90%, var(--color-primary-lightest) 10%);
+	}
+	
+	h6::before {
+		content: '######';
+		margin-right: 0.5rem;
+	}
+	
+	/* Paragraphs and spacing */
+	p,
+	ul,
+	ol,
+	img,
+	figure,
+	video,
+	table,
+	blockquote {
+		margin-top: 1.5rem;
+		margin-bottom: 1.5rem;
+	}
+	
+	/* Strong/bold text */
+	b,
+	strong {
+		font-weight: 600;
+	}
+	
+	/* Links */
+	a {
+		color: var(--color-link);
+		text-decoration: underline;
+		text-underline-offset: 2px;
+	}
+	
+	a:hover {
+		text-decoration: underline;
+	}
+	
+	/* Lists */
+	ul,
+	ol {
+		padding-left: 2rem;
+	}
+	
+	@media (min-width: 640px) {
+		ul,
+		ol {
+			padding-left: 2.5rem;
+		}
+	}
+	
+	li {
+		padding-left: 0.5rem;
+		margin-top: 1rem;
+		margin-bottom: 1rem;
+	}
+	
+	li::marker {
+		color: var(--color-primary-light);
+	}
+	
+	/* Unordered lists use dash */
+	ul li {
+		list-style-type: '-';
+	}
+	
+	/* Ordered lists use numbers */
+	ol li {
+		list-style-type: decimal;
+	}
+	
+	/* Horizontal rule */
+	hr {
+		height: 0.125rem;
+		margin-top: 4rem;
+		margin-bottom: 4rem;
+		border: none;
+		border-radius: 0.75rem;
+		background: color-mix(in srgb, var(--color-foreground) 20%, transparent);
+	}
+	
+	/* Blockquotes */
+	blockquote {
+		position: relative;
+		padding-left: 1.75rem;
+		padding-right: 1.75rem;
+		padding-top: 1.5rem;
+		padding-bottom: 1.5rem;
+		border-radius: 0.75rem;
+		background: color-mix(in srgb, var(--color-foreground) 5%, transparent);
+		font-size: 0.875rem; /* 减小字号 */
+	}
+	
+	blockquote::before {
+		content: '>';
+		position: absolute;
+		left: 0.75rem;
+		font-weight: 700;
+		color: var(--color-accent);
+	}
+	
+	blockquote p:first-child {
+		margin-top: 0;
+	}
+	
+	blockquote p:last-child {
+		margin-bottom: 0;
+	}
+	
+	/* Admonitions (:::warning:::, :::note:::, etc.) */
+	.admonition {
+		margin-top: 1.5rem;
+		margin-bottom: 1.5rem;
+		padding: 1rem 1.25rem;
+		border-radius: 0.75rem;
+		border-left: 4px solid;
+	}
+	
+	.admonition p.admonition-title {
+		margin-bottom: 0.5rem;
+		margin-top: 0;
+		font-weight: 600;
+		position: relative;
+		padding-left: 1.75rem;
+		text-transform: capitalize;
+	}
+	
+	.admonition p.admonition-title::before {
+		content: '';
+		position: absolute;
+		left: 0;
+		top: 0.125rem;
+		width: 1.25rem;
+		height: 1.25rem;
+		mask-size: contain;
+		mask-position: center;
+		mask-repeat: no-repeat;
+	}
+	
+	.admonition .admonition-content p:first-child {
+		margin-top: 0;
+	}
+	
+	.admonition .admonition-content p:last-child {
+		margin-bottom: 0;
+	}
+	
+	/* Info admonition */
+	.admonition[data-admonition-type='info'] {
+		background: color-mix(in srgb, var(--color-primary) 7%, transparent);
+		border-left-color: var(--color-primary);
+	}
+	
+	.admonition[data-admonition-type='info'] p.admonition-title {
+		color: var(--color-primary-light);
+	}
+	
+	.admonition[data-admonition-type='info'] p.admonition-title::before {
+		background: var(--color-primary-light);
+		mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' version='1.1' width='16' height='16' aria-hidden='true'%3E%3Cpath d='M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8Zm8-6.5a6.5 6.5 0 1 0 0 13 6.5 6.5 0 0 0 0-13ZM6.5 7.75A.75.75 0 0 1 7.25 7h1a.75.75 0 0 1 .75.75v2.75h.25a.75.75 0 0 1 0 1.5h-2a.75.75 0 0 1 0-1.5h.25v-2h-.25a.75.75 0 0 1-.75-.75ZM8 6a1 1 0 1 1 0-2 1 1 0 0 1 0 2Z'%3E%3C/path%3E%3C/svg%3E");
+	}
+	
+	/* Note admonition */
+	.admonition[data-admonition-type='note'] {
+		background: color-mix(in srgb, var(--color-primary) 7%, transparent);
+		border-left-color: var(--color-primary);
+	}
+	
+	.admonition[data-admonition-type='note'] p.admonition-title {
+		color: var(--color-primary-light);
+	}
+	
+	.admonition[data-admonition-type='note'] p.admonition-title::before {
+		background: var(--color-primary-light);
+		mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' version='1.1' width='16' height='16' aria-hidden='true'%3E%3Cpath d='M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8Zm8-6.5a6.5 6.5 0 1 0 0 13 6.5 6.5 0 0 0 0-13ZM6.5 7.75A.75.75 0 0 1 7.25 7h1a.75.75 0 0 1 .75.75v2.75h.25a.75.75 0 0 1 0 1.5h-2a.75.75 0 0 1 0-1.5h.25v-2h-.25a.75.75 0 0 1-.75-.75ZM8 6a1 1 0 1 1 0-2 1 1 0 0 1 0 2Z'%3E%3C/path%3E%3C/svg%3E");
+	}
+	
+	/* Important admonition */
+	.admonition[data-admonition-type='important'] {
+		background: color-mix(in srgb, var(--color-primary-lightest) 7%, transparent);
+		border-left-color: var(--color-primary-lightest);
+	}
+	
+	.admonition[data-admonition-type='important'] p.admonition-title {
+		color: var(--color-primary-lightest);
+	}
+	
+	.admonition[data-admonition-type='important'] p.admonition-title::before {
+		background: var(--color-primary-lightest);
+		mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' version='1.1' width='16' height='16' aria-hidden='true'%3E%3Cpath d='M0 1.75C0 .784.784 0 1.75 0h12.5C15.216 0 16 .784 16 1.75v9.5A1.75 1.75 0 0 1 14.25 13H8.06l-2.573 2.573A1.458 1.458 0 0 1 3 14.543V13H1.75A1.75 1.75 0 0 1 0 11.25Zm1.75-.25a.25.25 0 0 0-.25.25v9.5c0 .138.112.25.25.25h2a.75.75 0 0 1 .75.75v2.19l2.72-2.72a.749.749 0 0 1 .53-.22h6.5a.25.25 0 0 0 .25-.25v-9.5a.25.25 0 0 0-.25-.25Zm7 2.25v2.5a.75.75 0 0 1-1.5 0v-2.5a.75.75 0 0 1 1.5 0ZM9 9a1 1 0 1 1-2 0 1 1 0 0 1 2 0Z'%3E%3C/path%3E%3C/svg%3E");
+	}
+	
+	/* Caution admonition */
+	.admonition[data-admonition-type='caution'] {
+		background: color-mix(in srgb, var(--color-link) 7%, transparent);
+		border-left-color: var(--color-link);
+	}
+	
+	.admonition[data-admonition-type='caution'] p.admonition-title {
+		color: var(--color-link);
+	}
+	
+	.admonition[data-admonition-type='caution'] p.admonition-title::before {
+		background: var(--color-link);
+		mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' version='1.1' width='16' height='16' aria-hidden='true'%3E%3Cpath d='M6.457 1.047c.659-1.234 2.427-1.234 3.086 0l6.082 11.378A1.75 1.75 0 0 1 14.082 15H1.918a1.75 1.75 0 0 1-1.543-2.575Zm1.763.707a.25.25 0 0 0-.44 0L1.698 13.132a.25.25 0 0 0 .22.368h12.164a.25.25 0 0 0 .22-.368Zm.53 3.996v2.5a.75.75 0 0 1-1.5 0v-2.5a.75.75 0 0 1 1.5 0ZM9 11a1 1 0 1 1-2 0 1 1 0 0 1 2 0Z'%3E%3C/path%3E%3C/svg%3E");
+	}
+	
+	/* Warning admonition */
+	.admonition[data-admonition-type='warning'] {
+		background: color-mix(in srgb, var(--color-accent) 10%, transparent);
+		border-left-color: var(--color-accent);
+	}
+	
+	.admonition[data-admonition-type='warning'] p.admonition-title {
+		color: var(--color-accent);
+	}
+	
+	.admonition[data-admonition-type='warning'] p.admonition-title::before {
+		background: var(--color-accent);
+		mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' version='1.1' width='16' height='16' aria-hidden='true'%3E%3Cpath d='M4.47.22A.749.749 0 0 1 5 0h6c.199 0 .389.079.53.22l4.25 4.25c.141.14.22.331.22.53v6a.749.749 0 0 1-.22.53l-4.25 4.25A.749.749 0 0 1 11 16H5a.749.749 0 0 1-.53-.22L.22 11.53A.749.749 0 0 1 0 11V5c0-.199.079-.389.22-.53Zm.84 1.28L1.5 5.31v5.38l3.81 3.81h5.38l3.81-3.81V5.31L10.69 1.5ZM8 4a.75.75 0 0 1 .75.75v3.5a.75.75 0 0 1-1.5 0v-3.5A.75.75 0 0 1 8 4Zm0 8a1 1 0 1 1 0-2 1 1 0 0 1 0 2Z'%3E%3C/path%3E%3C/svg%3E");
+	}
+	
+	/* Tables */
+	table {
+		width: 100%;
+	}
+	
+	table,
+	th,
+	td {
+		border-width: 2px;
+		padding: 0.625rem;
+		border-color: color-mix(in srgb, var(--color-foreground) 80%, transparent);
+	}
+	
+	th {
+		text-transform: uppercase;
+		text-align: left;
+		font-weight: 600;
+	}
+	
+	/* Images */
+	img {
+		display: block;
+		max-width: 100%;
+		border-width: 8px;
+		border-radius: 0.75rem;
+		overflow: hidden;
+		margin-left: auto;
+		margin-right: auto;
+		border-color: color-mix(in srgb, var(--color-foreground) 10%, transparent);
+	}
+	
+	img[data-pixelated] {
+		image-rendering: pixelated;
+	}
+	
+	/* Figures with captions */
+	figure:not(.expressive-code figure) {
+		display: block;
+		margin-left: auto;
+		margin-right: auto;
+		border-radius: 0.75rem;
+		padding-top: 0.5rem;
+		padding-bottom: 0.5rem;
+	}
+	
+	figure:not(.expressive-code figure) figcaption {
+		text-align: center;
+		font-style: italic;
+	}
+	
+	/* Code blocks (Expressive Code) */
+	div.expressive-code {
+		margin-top: 2rem;
+		margin-bottom: 2rem;
+	}
+	
+	div.expressive-code figure {
+		border-width: 2px;
+		border-radius: 0.75rem;
+		border-color: color-mix(in srgb, var(--color-foreground) 8%, transparent);
+		box-shadow: none !important;
+	}
+	
+	div.expressive-code figure > pre {
+		border-radius: 10px !important;
+		border: none !important;
+		scrollbar-width: thin;
+		background: transparent !important;
+	}
+}
+
+
+strong,
+b {
+	font-weight: 700;
+}
+
+a {
+	@apply text-link transition-colors duration-150;
+}
+a:hover {
+	@apply text-primary-lightest underline;
+}
+
+p {
+	margin-bottom: 1em;
+}
+
+.prose p {
+	margin-bottom: 2em;
+}
+
+textarea {
+	width: 100%;
+	font-size: 16px;
+}
+
+input {
+	font-size: 16px;
+}
+
+table {
+	width: 100%;
+}
+
+img {
+	max-width: 100%;
+	height: auto;
+	border-radius: 8px;
+}
+
+code {
+	padding: 2px 5px;
+	background-color: rgba(255, 255, 255, 0.1);
+	border-radius: 0.25rem;
+}
+
+pre {
+	padding: 1.5em;
+	border-radius: 8px;
+}
+
+pre > code {
+	all: unset;
+}
+
+blockquote {
+	@apply border-l-4 border-accent;
+	padding: 0 0 0 20px;
+	margin: 0;
+	font-size: 1.333em;
+}
+
+hr {
+	border: none;
+	@apply border-t border-accent/40;
+}
+
+/* Responsive styles */
+main {
+	padding: 1rem 1em;
+}
+
+@media (min-width: 720px) {
+	body {
+		padding: 0 2rem;
+	}
+
+	main {
+		padding: 1em 0;
+	}
+}
+
+/* Utility class */
+.sr-only {
+	@apply absolute w-px h-px p-0 -m-px overflow-hidden whitespace-nowrap;
+	clip: rect(0, 0, 0, 0);
+	border: 0;
+}
+
+/* ===================================
+   Spectre-inspired Global Enhancements
+   =================================== */
+
+/* Smooth scrolling */
+html {
+	scroll-behavior: smooth;
+}
+
+/* Custom Scrollbar - Spectre inspired */
+::-webkit-scrollbar {
+	width: 8px;
+	height: 8px;
+}
+
+::-webkit-scrollbar-track {
+	background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+	background: rgba(var(--color-primary-rgb), 0.4);
+	border-radius: 4px;
+	transition: background 150ms ease;
+}
+
+::-webkit-scrollbar-thumb:hover {
+	background: rgba(var(--color-primary-rgb), 0.6);
+}
+
+/* Firefox scrollbar */
+* {
+	scrollbar-width: thin;
+	scrollbar-color: rgba(var(--color-primary-rgb), 0.4) transparent;
+}
+
+/* Selection styling */
+::selection {
+	background: var(--color-primary);
+	color: var(--color-foreground);
+}
+
+::-moz-selection {
+	background: var(--color-primary);
+	color: var(--color-foreground);
+}
+
+/* Focus visible for accessibility */
+:focus-visible {
+	outline: 2px solid var(--color-primary);
+	outline-offset: 2px;
+	border-radius: 2px;
+}
+
+/* ===================================
+   Starlight Tabs Component Styles
+   (for @astrojs/starlight/components)
+   =================================== */
+
+/* Starlight CSS Variables Override */
+starlight-tabs {
+	--sl-color-gray-5: color-mix(in srgb, var(--color-foreground) 15%, transparent);
+	--sl-color-gray-3: color-mix(in srgb, var(--color-foreground) 60%, transparent);
+	--sl-color-text-accent: var(--color-primary);
+	--sl-color-white: var(--color-foreground);
+	--sl-line-height-headings: 1.4;
+	--sl-outline-offset-inside: -2px;
+	
+	display: block;
+	margin-top: 1.5rem;
+	margin-bottom: 1.5rem;
+}
+
+/* Tab list container */
+starlight-tabs .tablist-wrapper {
+	overflow-x: auto;
+	scrollbar-width: thin;
+}
+
+/* Tab list */
+starlight-tabs [role='tablist'] {
+	display: flex;
+	list-style: none;
+	padding: 0;
+	margin: 0;
+	border-bottom: 2px solid color-mix(in srgb, var(--color-foreground) 15%, transparent);
+	gap: 0;
+}
+
+/* Individual tab item */
+starlight-tabs .tab {
+	display: flex;
+}
+
+/* Tab link */
+starlight-tabs .tab > [role='tab'] {
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
+	padding: 0.5rem 1.25rem;
+	font-size: 0.875rem;
+	font-weight: 500;
+	line-height: 1.4;
+	text-decoration: none;
+	color: color-mix(in srgb, var(--color-foreground) 60%, transparent);
+	background: transparent;
+	border: none;
+	border-bottom: 2px solid transparent;
+	margin-bottom: -2px;
+	cursor: pointer;
+	transition: color 150ms ease, border-color 150ms ease, box-shadow 150ms ease;
+	outline-offset: -2px;
+	overflow-wrap: initial;
+	white-space: nowrap;
+}
+
+/* Tab hover state */
+starlight-tabs .tab > [role='tab']:hover {
+	color: color-mix(in srgb, var(--color-foreground) 80%, transparent);
+	border-bottom-color: color-mix(in srgb, var(--color-primary) 40%, transparent);
+}
+
+/* Tab selected state */
+starlight-tabs .tab [role='tab'][aria-selected='true'] {
+	color: var(--color-foreground);
+	font-weight: 600;
+	border-bottom-color: var(--color-primary);
+	box-shadow: 0 2px 8px color-mix(in srgb, var(--color-primary) 25%, transparent);
+}
+
+/* Tab focus state */
+starlight-tabs .tab > [role='tab']:focus-visible {
+	outline: 2px solid var(--color-primary);
+	outline-offset: -2px;
+}
+
+/* Tab panel content */
+starlight-tabs > [role='tabpanel'] {
+	margin-top: 1rem;
+	padding: 1rem;
+	background: color-mix(in srgb, var(--color-foreground) 3%, transparent);
+	border: 1px solid color-mix(in srgb, var(--color-foreground) 10%, transparent);
+	border-radius: 0;
+}
+
+/* Hidden tab panel */
+starlight-tabs > [role='tabpanel'][hidden] {
+	display: none;
+}
+
+/* Tab panel content styling - inherit prose styles */
+starlight-tabs > [role='tabpanel'] > :first-child {
+	margin-top: 0;
+}
+
+starlight-tabs > [role='tabpanel'] > :last-child {
+	margin-bottom: 0;
+}
+
+/* Code blocks inside tab panels */
+starlight-tabs > [role='tabpanel'] div.expressive-code {
+	margin-top: 1rem;
+	margin-bottom: 1rem;
+}
+
+starlight-tabs > [role='tabpanel'] div.expressive-code:first-child {
+	margin-top: 0;
+}
+
+starlight-tabs > [role='tabpanel'] div.expressive-code:last-child {
+	margin-bottom: 0;
+}
+
+/* Icon inside tab */
+starlight-tabs .tab > [role='tab'] svg {
+	width: 1rem;
+	height: 1rem;
+	flex-shrink: 0;
+}

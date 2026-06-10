@@ -1,0 +1,98 @@
+---
+/**
+ * ProfileCard Component
+ * Displays user profile with avatar and quick info
+ */
+
+import Card from './Card.astro';
+import { AVATAR_URL } from '../consts';
+import { Icon } from 'astro-icon/components';
+
+interface Props {
+	name: string;
+	info?: string[];
+}
+
+const { name, info = [] } = Astro.props;
+
+const infoIcons = ['ph:map-pin-line-duotone', 'ph:compass-duotone', 'ph:book-open-duotone'];
+---
+
+<Card class="flex flex-col items-center gap-3">
+	<!-- Avatar with remote src + inline fallback -->
+	<div class="avatar-shell">
+		<img
+			src={AVATAR_URL}
+			alt={`${name} avatar`}
+			loading="lazy"
+			width="96"
+			height="96"
+			class="avatar-img"
+			decoding="async"
+			onload="const fbLoad=this.nextElementSibling; if(fbLoad) fbLoad.classList.add('hide-fallback');"
+			onerror="const fbError=this.nextElementSibling; if(fbError) fbError.classList.remove('hide-fallback');"
+		/>
+		<div class="avatar-fallback" aria-hidden="true">
+			<Icon name="ph:bowling-ball-duotone" class="w-12 h-12" />
+		</div>
+	</div>
+	
+	<!-- Name -->
+	<h2 class="text-lg font-bold text-[var(--color-foreground)] m-0">{name}</h2>
+	
+	<!-- Quick Info List -->
+	<ul class="list-none p-0 m-0 w-full text-sm">
+		{info.map((item, index) => (
+			<li class="flex items-center gap-2 mb-2 last:mb-0">
+				<Icon
+					name={infoIcons[index % infoIcons.length]}
+					class="w-5 h-5 text-[var(--color-primary)] flex-shrink-0"
+				/>
+				<span class="text-[var(--color-foreground)]">{item}</span>
+			</li>
+		))}
+	</ul>
+</Card>
+
+<style>
+	.avatar-shell {
+		position: relative;
+		width: 6rem;
+		height: 6rem;
+		border-radius: 9999px;
+		overflow: hidden;
+		border: 2px solid var(--color-primary);
+		background: color-mix(in srgb, var(--color-primary) 12%, transparent);
+		display: grid;
+		place-items: center;
+	}
+
+	.avatar-img {
+		width: 100%;
+		height: 100%;
+		object-fit: cover;
+		display: block;
+	}
+
+	.avatar-fallback {
+		position: absolute;
+		inset: 0;
+		display: grid;
+		place-items: center;
+		color: var(--color-primary);
+		opacity: 0.85;
+		pointer-events: none;
+	}
+
+	.avatar-fallback.hide-fallback {
+		opacity: 0;
+	}
+
+	.avatar-fallback :global(svg) {
+		filter: drop-shadow(0 0 6px var(--color-primary));
+	}
+
+	.iconify {
+		display: block;
+	}
+</style>

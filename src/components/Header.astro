@@ -1,0 +1,290 @@
+---
+import ThemeSelector from './ThemeSelector.astro';
+import LanguageSwitcher from './LanguageSwitcher.astro';
+import { Icon } from 'astro-icon/components';
+import { SITE_TITLE } from '../consts';
+import type { AstroComponentFactory } from 'astro/runtime/server/index.js';
+import { defaultLang, useTranslations, getRelativeLocaleUrl } from '../i18n/config';
+import type { Lang } from '../i18n/config';
+
+type NavItem = 
+	| { type: 'link'; name: string; href: string }
+	| { type: 'component'; component: AstroComponentFactory; class?: string };
+
+const { lang = defaultLang } = Astro.props as { lang?: Lang };
+const t = useTranslations(lang);
+
+const localized = (path: string) => getRelativeLocaleUrl(lang, path);
+
+const items = [
+	{ type: 'link', name: t('common.nav.home'), href: localized('/') },
+	{ type: 'link', name: t('common.nav.blog'), href: localized('/blog') },
+	{ type: 'link', name: t('common.nav.friends'), href: localized('/links') },
+	{ type: 'link', name: t('common.nav.about'), href: localized('/about') },
+	{ type: 'component', component: LanguageSwitcher, class: 'w-full sm:w-auto sm:pl-1 language-switcher-li' },
+	{ type: 'component', component: ThemeSelector, class: 'w-full sm:w-auto sm:pl-1 theme-selector-li' },
+] satisfies NavItem[];
+---
+
+<nav
+	class="header-nav fixed top-0 left-0 right-0 z-[50] w-full bg-[color:var(--color-background)] transition-transform duration-300 ease-in-out"
+	data-open="false"
+	data-scroll-direction="up"
+>
+	<div class="nav-container max-w-[1280px] mx-auto px-4 py-4 flex items-center justify-between">
+		<a class="font-extrabold text-xl no-underline" href="/">{SITE_TITLE}</a>
+
+		<ul
+			id="primary-nav"
+			class="nav-list hidden flex-col absolute left-0 right-0 top-full z-[40] p-4 gap-0 bg-[color:var(--color-background)] shadow-xl opacity-0 pointer-events-none transition-all duration-200 ease-out sm:static sm:flex sm:flex-row sm:items-center sm:gap-4 sm:p-0 sm:opacity-100 sm:pointer-events-auto sm:shadow-none"
+		>
+			{items.map((item, index) => (
+				<>
+					{item.type === 'link' ? (
+						<li class="w-full sm:w-auto">
+							<a href={item.href} class="nav-link">
+								{item.name}
+							</a>
+						</li>
+					) : (
+						<li class={item.class}>
+							<item.component lang={lang} />
+						</li>
+					)}
+					{index < items.length - 1 && (
+						<li class="nav-separator hidden sm:inline text-[color-mix(in_srgb,var(--color-foreground)_70%,transparent)] select-none">/</li>
+					)}
+				</>
+			))}
+		</ul>
+
+		<button
+			class="mobile-menu-toggle inline-flex h-10 w-10 items-center justify-center border-2 border-[color-mix(in_srgb,var(--color-accent)_20%,transparent)] bg-[color:var(--color-background)] text-[color:var(--color-accent)] transition-colors duration-150 sm:hidden"
+			data-nav-toggle
+			aria-label={t('common.mobileMenu')}
+			aria-expanded="false"
+			aria-controls="primary-nav"
+		>
+			<Icon name="ph:list-duotone" class="menu-closed w-6 h-6" />
+			<Icon name="ph:x-duotone" class="menu-open w-6 h-6 hidden" />
+		</button>
+	</div>
+</nav>
+
+<style>
+	.header-nav {
+		border-bottom: 1px solid color-mix(in srgb, var(--color-foreground) 10%, transparent);
+		backdrop-filter: blur(10px);
+		background: color-mix(in srgb, var(--color-background) 95%, transparent);
+	}
+	
+	.header-nav[data-scroll-direction="down"] {
+		transform: translateY(-100%);
+	}
+	
+	.header-nav[data-scroll-direction="up"] {
+		transform: translateY(0);
+	}
+	
+	.header-nav a {
+		color: var(--color-foreground);
+		text-decoration: none;
+	}
+
+	.header-nav li:hover > a,
+	.header-nav li:focus-within > a {
+		color: var(--color-foreground);
+		background-color: var(--color-accent)
+	}
+
+	.nav-link {
+		display: block;
+		padding: 0.25rem 0.5rem;
+		font-size: 1.125rem;
+		line-height: 1.5;
+		color: var(--color-foreground);
+		transition: color 150ms ease, background-color 150ms ease;
+	}
+
+	@media (min-width: 640px) {
+		.nav-link {
+			padding: 0.25rem 0.5rem;
+			font-size: 1rem;
+		}
+	}
+
+	@media (min-width: 640px) {
+		.nav-list {
+			display: flex !important;
+		}
+	}
+
+	.nav-list {
+		max-height: calc(100vh - 4rem);
+		overflow: auto;
+	}
+
+	.nav-list li {
+		width: 100%;
+		border-bottom: 1px solid color-mix(in srgb, var(--color-accent) 20%, transparent);
+	}
+
+	.nav-list li:last-child {
+		border-bottom: none;
+	}
+
+	/* Component li items */
+	.theme-selector-li,
+	.language-switcher-li {
+		display: flex;
+		align-items: center;
+	}
+
+	/* Mobile menu: full width */
+	@media (max-width: 639px) {
+		.theme-selector-li,
+		.language-switcher-li {
+			width: 100%;
+		}
+
+		/* Full width buttons in mobile menu */
+		.theme-selector-li :global(#theme-selector-btn),
+		.language-switcher-li :global(#lang-switcher-btn) {
+			width: 100%;
+			justify-content: flex-start;
+			padding: 0.375rem 0.5rem;
+		}
+
+		/* Show labels in mobile menu */
+		.theme-selector-li :global(.nav-label-mobile),
+		.language-switcher-li :global(.nav-label-mobile) {
+			display: inline;
+		}
+	}
+
+	[data-open='true'] .nav-list {
+		display: flex;
+		opacity: 1;
+		pointer-events: auto;
+	}
+
+	[data-open='true'] .menu-closed {
+		display: none;
+	}
+
+	[data-open='true'] .menu-open {
+		display: block;
+	}
+
+	@media (min-width: 640px) {
+		.nav-list {
+			max-height: none;
+			overflow: visible;
+		}
+
+		.nav-list li {
+			width: auto;
+			border-bottom: none;
+		}
+
+		.theme-selector-li,
+		.language-switcher-li {
+			width: auto;
+		}
+
+		.theme-selector-li :global(.theme-selector-wrapper),
+		.language-switcher-li :global(.lang-switcher-wrapper) {
+			display: inline-flex;
+			width: auto;
+		}
+
+		/* Reset button styles for desktop */
+		.theme-selector-li :global(.nav-trigger),
+		.theme-selector-li :global(#theme-selector-btn),
+		.language-switcher-li :global(#lang-switcher-btn) {
+			display: inline-flex;
+			width: auto;
+			justify-content: center;
+			padding: 0.25rem 0.5rem;
+			font-size: 1rem;
+		}
+
+		/* Hide text labels on desktop - show only icons */
+		.theme-selector-li :global(.nav-label-mobile),
+		.language-switcher-li :global(.nav-label-mobile) {
+			display: none;
+		}
+	}
+	
+	.mobile-menu-toggle {
+		position: relative;
+		z-index: 60;
+	}
+	
+	/* Add padding to body to prevent content from being hidden under fixed nav */
+	:global(body) {
+		padding-top: 4rem;
+	}
+</style>
+
+<script is:inline>
+	const nav = document.querySelector('nav[data-open]');
+	const toggle = document.querySelector('[data-nav-toggle]');
+	const navList = document.getElementById('primary-nav');
+
+	// Mobile menu toggle
+	if (nav && toggle) {
+		toggle.addEventListener('click', (e) => {
+			e.stopPropagation(); // 防止触发document的点击事件
+			const isOpen = nav.getAttribute('data-open') === 'true';
+			nav.setAttribute('data-open', isOpen ? 'false' : 'true');
+			toggle.setAttribute('aria-expanded', isOpen ? 'false' : 'true');
+		});
+	}
+	
+	// Close menu when clicking outside (mobile only)
+	document.addEventListener('click', (e) => {
+		// Only on mobile (when toggle is visible)
+		if (window.innerWidth >= 640) return;
+		
+		if (nav && navList && toggle) {
+			const isOpen = nav.getAttribute('data-open') === 'true';
+			
+			// If menu is open and click is outside nav and toggle button
+			if (isOpen && !navList.contains(e.target) && !toggle.contains(e.target)) {
+				nav.setAttribute('data-open', 'false');
+				toggle.setAttribute('aria-expanded', 'false');
+			}
+		}
+	});
+	
+	// Auto-hide/show nav on scroll
+	let lastScrollTop = 0;
+	let ticking = false;
+	const scrollThreshold = 100; // 开始隐藏导航栏的滚动距离
+	
+	function updateNavOnScroll() {
+		const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+		
+		// 如果在页面顶部附近，始终显示导航栏
+		if (scrollTop < scrollThreshold) {
+			nav.setAttribute('data-scroll-direction', 'up');
+		} else if (scrollTop > lastScrollTop) {
+			// 向下滚动 - 隐藏导航栏
+			nav.setAttribute('data-scroll-direction', 'down');
+		} else {
+			// 向上滚动 - 显示导航栏
+			nav.setAttribute('data-scroll-direction', 'up');
+		}
+		
+		lastScrollTop = scrollTop <= 0 ? 0 : scrollTop;
+		ticking = false;
+	}
+	
+	window.addEventListener('scroll', () => {
+		if (!ticking) {
+			window.requestAnimationFrame(updateNavOnScroll);
+			ticking = true;
+		}
+	});
+</script>

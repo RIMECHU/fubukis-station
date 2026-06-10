@@ -1,0 +1,22 @@
+---
+import { type CollectionEntry, render } from 'astro:content';
+import BlogPost from '../../layouts/BlogPost.astro';
+import { getAllPostsWithPreferredLang as getCollectionWithPreferredLang, getPostBaseId } from '../../i18n/i18n';
+import { defaultLang } from '../../i18n/config';
+
+export async function getStaticPaths() {
+  const posts = await getCollectionWithPreferredLang(defaultLang);
+  
+  return posts.map(post => ({
+    params: { slug: getPostBaseId(post) },
+    props: { post },
+  }));
+}
+
+const { post } = Astro.props as { post: CollectionEntry<'blog'> };
+const { Content, headings } = await render(post);
+---
+
+<BlogPost {...post.data} headings={headings}>
+	<Content />
+</BlogPost>

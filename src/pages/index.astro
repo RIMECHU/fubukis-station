@@ -1,0 +1,333 @@
+---
+import PageLayout from '../layouts/PageLayout.astro';
+import Card from '../components/Card.astro';
+import CardHeader from '../components/CardHeader.astro';
+import LatestPosts from '../components/LatestPosts.astro';
+import { SITE_DESCRIPTION, SITE_TITLE, USER_NAME, AVATAR_URL } from '../consts';
+import { SOCIAL_LINKS, getQuickInfo } from '../config/profile';
+import OpeningAnimation from '../components/OpeningAnimation.astro';
+import { defaultLang, resolveLang, useTranslations } from '../i18n/config';
+import type { Lang } from '../i18n/config';
+import { getAllPostsWithPreferredLang } from '../i18n/i18n';
+import { Icon } from 'astro-icon/components';
+
+const { lang: langProp } = Astro.props as { lang?: Lang };
+const lang = langProp ?? resolveLang(Astro.url.pathname) ?? defaultLang;
+
+const posts = (await getAllPostsWithPreferredLang(lang)).slice(0, 2);
+
+const t = useTranslations(lang);
+---
+
+<PageLayout
+    title={SITE_TITLE}
+    description={SITE_DESCRIPTION}
+    lang={lang}
+    class="w-full max-w-[960px] mx-auto py-8"
+>
+    <OpeningAnimation slot="overlay" />
+
+    <div class="layout">
+        <!-- ═══════ LEFT COLUMN ═══════ -->
+        <aside class="left-col">
+            <!-- Hero -->
+            <div class="landing-section delay-0">
+                <div class="hero">
+                    <img
+                        src={AVATAR_URL}
+                        alt="avatar"
+                        class="avatar"
+                        width="72"
+                        height="72"
+                        loading="lazy"
+                        decoding="async"
+                    />
+                    <div class="hero-text">
+                        <h1 class="name">{USER_NAME}</h1>
+                        <p class="tagline">{SITE_DESCRIPTION}</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Social Links -->
+            <div class="landing-section delay-100">
+                <div class="terminal">
+                    <div class="term-bar">
+                        <span class="dot red"></span>
+                        <span class="dot yellow"></span>
+                        <span class="dot green"></span>
+                        <span class="term-label">links</span>
+                    </div>
+                    <div class="term-body">
+                        <div class="social-row">
+                            {SOCIAL_LINKS.map((social) => (
+                                <a
+                                    href={social.url}
+                                    class="social-link"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                >
+                                    <Icon name={social.icon} class="w-5 h-5" />
+                                    <span>{social.name}</span>
+                                </a>
+                            ))}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- ═══════ RIGHT COLUMN ═══════ -->
+        <main class="right-col">
+            <!-- Terminal -->
+            <div class="landing-section delay-200">
+                <div class="terminal">
+                    <div class="term-bar">
+                        <span class="dot red"></span>
+                        <span class="dot yellow"></span>
+                        <span class="dot green"></span>
+                        <span class="term-label">whoami</span>
+                    </div>
+                    <div class="term-body">
+                        <div class="term-row">
+                            <span class="term-prompt">$ plastic</span>
+                            <span class="term-out">{t('home.intro')}</span>
+                        </div>
+                        <div class="term-row">
+                            <span class="term-prompt">$ sadistic</span>
+                            <span class="term-out">{SOCIAL_LINKS.map(s => s.name).join('  ·  ')}</span>
+                        </div>
+                        {getQuickInfo(lang).map((info: string, i: number) => (
+                            <div class="term-row">
+                                <span class="term-prompt">$ illusion -{i + 1}</span>
+                                <span class="term-out">{info}</span>
+                            </div>
+                        ))}
+                        <span class="cursor"></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Video -->
+            <div class="landing-section delay-300">
+                <div class="terminal">
+                    <div class="term-bar">
+                        <span class="dot red"></span>
+                        <span class="dot yellow"></span>
+                        <span class="dot green"></span>
+                        <span class="term-label">video</span>
+                    </div>
+                    <div class="term-body" style="padding: 0;">
+                        <div class="video-wrap" id="video-container">
+                            <div class="video-poster" id="video-poster"
+                                 style="background-image: url(https://img.youtube.com/vi/JUchy1KSLOI/maxresdefault.jpg);">
+                                <div class="play-btn">
+                                    <svg viewBox="0 0 24 24" fill="white" width="56" height="56"><path d="M8 5v14l11-7z"/></svg>
+                                </div>
+                            </div>
+                            <div id="video-player" style="display:none; position:absolute; inset:0;"></div>
+                        </div>
+                    </div>
+                    <script>
+                        document.getElementById('video-poster').addEventListener('click', function() {
+                            var poster = this;
+                            var player = document.getElementById('video-player');
+                            poster.style.display = 'none';
+                            player.style.display = 'block';
+                            player.innerHTML = '<iframe src="https://www.youtube.com/embed/JUchy1KSLOI?autoplay=1" frameborder="0" allowfullscreen allow="autoplay; fullscreen; clipboard-write; encrypted-media; gyroscope; picture-in-picture" style="position:absolute;inset:0;width:100%;height:100%;border:none;" loading="lazy"></iframe>';
+                        });
+                    </script>
+                </div>
+            </div>
+
+            <!-- Latest Posts -->
+            {posts.length > 0 && (
+                <div class="landing-section delay-400">
+                    <Card>
+                        <CardHeader title={t('home.latestPosts')} />
+                        <LatestPosts posts={posts} lang={lang} />
+                    </Card>
+                </div>
+            )}
+        </main>
+    </div>
+</PageLayout>
+
+<style>
+    /* ── Layout ── */
+    .layout {
+        display: grid;
+        gap: 1.25rem;
+        padding: 0 1rem;
+    }
+    @media (min-width: 768px) {
+        .layout {
+            grid-template-columns: 240px 1fr;
+            align-items: start;
+        }
+        .left-col {
+            position: sticky;
+            top: 1.5rem;
+        }
+    }
+    .left-col {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+    }
+    .right-col {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+        min-width: 0;
+    }
+
+    /* ── Hero ── */
+    .hero {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+    .avatar {
+        width: 72px;
+        height: 72px;
+        border-radius: 999px;
+        border: 2px solid color-mix(in srgb, var(--color-primary) 40%, transparent);
+        box-shadow: 0 0 24px color-mix(in srgb, var(--color-primary) 18%, transparent);
+        object-fit: cover;
+        flex-shrink: 0;
+    }
+    .hero-text {
+        min-width: 0;
+    }
+    .name {
+        margin: 0;
+        font-size: 1.25rem;
+        font-weight: 800;
+        color: var(--color-foreground);
+    }
+    .tagline {
+        margin: 0.15rem 0 0;
+        font-size: 0.85rem;
+        color: color-mix(in srgb, var(--color-foreground) 55%, transparent);
+    }
+
+    /* ── Terminal ── */
+    .terminal {
+        border: 1px solid color-mix(in srgb, var(--color-foreground) 10%, transparent);
+        border-radius: 10px;
+        overflow: hidden;
+        font-family: var(--font-mono, monospace);
+        font-size: 0.85rem;
+    }
+    .term-bar {
+        display: flex;
+        align-items: center;
+        gap: 0.35rem;
+        padding: 0.45rem 0.75rem;
+        background: color-mix(in srgb, var(--color-foreground) 5%, transparent);
+        border-bottom: 1px solid color-mix(in srgb, var(--color-foreground) 8%, transparent);
+    }
+    .term-label {
+        margin-left: auto;
+        font-size: 0.72rem;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        color: color-mix(in srgb, var(--color-foreground) 40%, transparent);
+    }
+    .dot { width: 9px; height: 9px; border-radius: 999px; }
+    .dot.red    { background: #ff5f56; }
+    .dot.yellow { background: #ffbd2e; }
+    .dot.green  { background: #27c93f; }
+
+    .term-body {
+        padding: 0.8rem 0.9rem;
+        display: grid;
+        gap: 0.5rem;
+        background: color-mix(in srgb, var(--color-background) 98%, transparent);
+    }
+    .term-row {
+        display: grid;
+        gap: 0.1rem;
+    }
+    .term-prompt {
+        color: var(--color-primary);
+        font-weight: 600;
+    }
+    .term-out {
+        color: color-mix(in srgb, var(--color-foreground) 75%, transparent);
+        padding-left: 0.5rem;
+        border-left: 2px solid color-mix(in srgb, var(--color-primary) 35%, transparent);
+    }
+    .cursor {
+        display: inline-block;
+        width: 0.6em;
+        height: 1.1em;
+        background: var(--color-primary);
+        animation: blink 1s step-end infinite;
+    }
+    @keyframes blink { 50% { opacity: 0; } }
+
+    /* ── Video ── */
+    .video-wrap {
+        position: relative;
+        padding-bottom: 56.25%;
+        height: 0;
+        background: #000;
+    }
+    .video-wrap iframe {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        border: none;
+    }
+    .video-poster {
+        position: absolute;
+        inset: 0;
+        background: #0d0d0d center/cover no-repeat;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .play-btn {
+        width: 72px;
+        height: 72px;
+        border-radius: 999px;
+        background: rgba(0,0,0,0.7);
+        border: 2px solid rgba(255,255,255,0.6);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: background 0.2s, border-color 0.2s;
+    }
+    .video-poster:hover .play-btn {
+        background: var(--color-primary);
+        border-color: var(--color-primary);
+    }
+
+    /* ── Socials ── */
+    .social-row {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.4rem;
+    }
+    .social-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.4rem 0.75rem;
+        border: 1px solid color-mix(in srgb, var(--color-foreground) 10%, transparent);
+        border-radius: 8px;
+        color: var(--color-foreground);
+        text-decoration: none;
+        font-size: 0.9rem;
+        transition: border-color 0.15s, background 0.15s;
+    }
+    .social-link:hover {
+        border-color: var(--color-primary);
+        background: color-mix(in srgb, var(--color-primary) 6%, transparent);
+    }
+</style>

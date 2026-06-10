@@ -1,0 +1,23 @@
+{
+  "extends": "astro/tsconfigs/strict",
+  "include": [
+    ".astro/types.d.ts",
+    "src/**/*",
+    "scripts/**/*",
+    "astro.config.mjs",
+    "content.config.ts",
+    "wrangler.jsonc"
+  ],
+  "exclude": [
+    "dist",
+    "node_modules",
+    "multiterm-astro",
+    "spectre",
+    ".agent"
+  ],
+  "compilerOptions": {
+    "strictNullChecks": true,
+    "jsx": "react-jsx",
+    "jsxImportSource": "react"
+  }
+}

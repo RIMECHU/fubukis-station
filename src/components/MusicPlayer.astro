@@ -1,0 +1,329 @@
+---
+const SRC = '/TK from 凛として時雨 - an artist.mp3';
+const TITLE = 'TK from 凛として時雨 - an artist';
+---
+
+<div id="music-player" class="music-player">
+    <div class="mp-bar">
+        <span class="dot red"></span>
+        <span class="dot yellow"></span>
+        <span class="dot green"></span>
+        <span class="mp-title">{TITLE}</span>
+        <div class="mp-vol-wrap" id="mp-vol-wrap">
+            <button class="mp-btn mp-vol-icon" id="mp-vol-icon" aria-label="Volume">🔊</button>
+            <div class="mp-vol-pop" id="mp-vol-pop">
+                <input type="range" id="mp-volume" class="mp-vol" min="0" max="100" value="15" orient="vertical" />
+                <span id="vol-num" class="vol-num">15</span>
+            </div>
+        </div>
+        <button id="mp-toggle" class="mp-btn" aria-label="Toggle music">⏸</button>
+    </div>
+</div>
+
+<script>
+    // ── MusicPlayer: event delegation (survives ClientRouter SPA navigations) ──
+    (function() {
+        var TARGET_VOL = 0.15;
+        var FADE_DURATION = 5000;
+        var SONG_SRC = '/TK from 凛として時雨 - an artist.mp3';
+        var win = window;
+
+        // ── Persistent audio ──
+        if (!win.__siteAudio) {
+            var a = new Audio(SONG_SRC);
+            a.loop = true;
+            a.volume = 0;
+            win.__siteAudio = a;
+            win.__siteAudioCreated = true;
+        }
+        var audio = win.__siteAudio;
+        var created = win.__siteAudioCreated;
+
+        // ── Dynamic DOM helpers (re-query every call to survive SPA swaps) ──
+        function getBtn() { return document.getElementById('mp-toggle'); }
+        function getVolInput() { return document.getElementById('mp-volume'); }
+        function getVolNum() { return document.getElementById('vol-num'); }
+        function getVolIcon() { return document.getElementById('mp-vol-icon'); }
+        function getVolWrap() { return document.getElementById('mp-vol-wrap'); }
+
+        function updateVolUI(v) {
+            var vi = getVolInput();
+            var vn = getVolNum();
+            var vic = getVolIcon();
+            if (vi) vi.value = String(Math.round(v * 100));
+            if (vn) vn.textContent = String(Math.round(v * 100));
+            if (vic) {
+                if (v === 0) vic.textContent = '🔇';
+                else if (v < 0.3) vic.textContent = '🔉';
+                else vic.textContent = '🔊';
+            }
+        }
+
+        function updatePlayUI() {
+            var b = getBtn();
+            if (b) b.textContent = audio.paused ? '▶' : '⏸';
+        }
+
+        // Sync UI now (elements may not exist yet on first load — that's OK, updatePlayUI/getBtn handle null)
+        updateVolUI(audio.volume);
+        updatePlayUI();
+
+        // ── Fade-in logic ──
+        var fadingIn = false;
+
+        function doFadeIn() {
+            if (fadingIn) return;
+            fadingIn = true;
+            audio.volume = 0;
+            updateVolUI(0);
+            audio.play().then(function() {
+                updatePlayUI();
+                var start = performance.now();
+                function fade(now) {
+                    var elapsed = now - start;
+                    var progress = Math.min(elapsed / FADE_DURATION, 1);
+                    var eased = 1 - Math.pow(1 - progress, 3);
+                    audio.volume = eased * TARGET_VOL;
+                    updateVolUI(audio.volume);
+                    if (progress < 1) {
+                        requestAnimationFrame(fade);
+                    } else {
+                        fadingIn = false;
+                    }
+                }
+                requestAnimationFrame(fade);
+            }).catch(function() {
+                fadingIn = false;
+            });
+        }
+
+        if (created) {
+            win.__siteAudioCreated = false;
+            updateVolUI(0);
+            audio.play().then(function() {
+                updatePlayUI();
+                var start = performance.now();
+                function fade(now) {
+                    var elapsed = now - start;
+                    var progress = Math.min(elapsed / FADE_DURATION, 1);
+                    var eased = 1 - Math.pow(1 - progress, 3);
+                    audio.volume = eased * TARGET_VOL;
+                    updateVolUI(audio.volume);
+                    if (progress < 1) requestAnimationFrame(fade);
+                }
+                fadingIn = true;
+                requestAnimationFrame(fade);
+            }).catch(function() {
+                updatePlayUI();
+                // Autoplay blocked — start on first user interaction
+                var events = ['touchstart', 'keydown'];
+                function onInteract() {
+                    doFadeIn();
+                    events.forEach(function(e) { document.removeEventListener(e, onInteract); });
+                }
+                events.forEach(function(e) { document.addEventListener(e, onInteract, { once: true }); });
+            });
+        }
+
+        // ── Event delegation: click (play/pause, mute, popover close, contextmenu) ──
+        document.addEventListener('click', function(e) {
+            var target = e.target;
+            if (!target) return;
+
+            // Play/pause button
+            if (target.closest('#mp-toggle')) {
+                if (audio.paused) {
+                    if (audio.volume < 0.01) {
+                        doFadeIn();
+                    } else {
+                        audio.volume = TARGET_VOL;
+                        updateVolUI(audio.volume);
+                        audio.play().catch(function() {});
+                    }
+                } else {
+                    audio.pause();
+                }
+                updatePlayUI();
+                return;
+            }
+
+            // Volume icon: mute/unmute
+            if (target.closest('#mp-vol-icon')) {
+                var savedVol = win.__mpSavedVol || TARGET_VOL;
+                if (audio.volume > 0) {
+                    win.__mpSavedVol = audio.volume;
+                    audio.volume = 0;
+                } else {
+                    audio.volume = savedVol;
+                }
+                updateVolUI(audio.volume);
+                return;
+            }
+
+            // Close volume popover when clicking outside
+            var vw = getVolWrap();
+            if (vw && !vw.contains(target)) {
+                vw.classList.remove('vol-open');
+            }
+        });
+
+        // ── Event delegation: volume slider input ──
+        document.addEventListener('input', function(e) {
+            var target = e.target;
+            if (target && target.id === 'mp-volume') {
+                audio.volume = Number(target.value) / 100;
+                updateVolUI(audio.volume);
+            }
+        });
+
+        // ── Event delegation: touch (long-press for volume popover) ──
+        var longPressTimer;
+        document.addEventListener('touchstart', function(e) {
+            var target = e.target;
+            if (target && target.closest('#mp-vol-icon')) {
+                longPressTimer = setTimeout(function() {
+                    var vw = getVolWrap();
+                    if (vw) vw.classList.toggle('vol-open');
+                }, 500);
+            }
+        }, { passive: true });
+        document.addEventListener('touchend', function() {
+            clearTimeout(longPressTimer);
+        });
+        document.addEventListener('touchmove', function() {
+            clearTimeout(longPressTimer);
+        });
+
+        // ── Event delegation: contextmenu (right-click / long-press for volume popover) ──
+        document.addEventListener('contextmenu', function(e) {
+            var target = e.target;
+            if (target && target.closest('#mp-vol-icon')) {
+                e.preventDefault();
+                var vw = getVolWrap();
+                if (vw) vw.classList.toggle('vol-open');
+            }
+        });
+
+        // ── Sync UI on audio events (attach only once globally) ──
+        if (!win.__siteAudioListenersAttached) {
+            win.__siteAudioListenersAttached = true;
+            audio.addEventListener('play', updatePlayUI);
+            audio.addEventListener('pause', updatePlayUI);
+            audio.addEventListener('volumechange', function() { updateVolUI(audio.volume); });
+        }
+
+        // ── Re-sync UI after each SPA navigation ──
+        document.addEventListener('astro:after-swap', function() {
+            // Small delay to ensure new DOM is settled
+            setTimeout(function() {
+                updatePlayUI();
+                updateVolUI(audio.volume);
+            }, 0);
+        });
+    })();
+</script>
+
+<style>
+    .music-player {
+        position: fixed;
+        bottom: 1rem;
+        left: 1rem;
+        z-index: 9998;
+        border: 1px solid color-mix(in srgb, var(--color-foreground) 10%, transparent);
+        border-radius: 8px;
+        background: color-mix(in srgb, var(--color-background) 96%, transparent);
+        backdrop-filter: blur(8px);
+        font-family: var(--font-mono, monospace);
+        font-size: 0.8rem;
+    }
+    .mp-bar {
+        display: flex;
+        align-items: center;
+        gap: 0.3rem;
+        padding: 0.35rem 0.6rem;
+        background: color-mix(in srgb, var(--color-foreground) 5%, transparent);
+        border-bottom: 1px solid color-mix(in srgb, var(--color-foreground) 6%, transparent);
+    }
+    .mp-title {
+        flex: 1;
+        font-size: 0.72rem;
+        color: color-mix(in srgb, var(--color-foreground) 60%, transparent);
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        margin: 0 0.25rem;
+    }
+    .mp-btn {
+        background: none;
+        border: 1px solid color-mix(in srgb, var(--color-foreground) 15%, transparent);
+        border-radius: 4px;
+        color: var(--color-foreground);
+        cursor: pointer;
+        font-size: 0.7rem;
+        padding: 0;
+        flex-shrink: 0;
+        width: 22px;
+        height: 22px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        line-height: 1;
+    }
+    .mp-btn:hover {
+        border-color: var(--color-primary);
+        color: var(--color-primary);
+    }
+
+    /* ── Volume popover ── */
+    .mp-vol-wrap {
+        position: relative;
+    }
+    .mp-vol-icon {
+        font-size: 0.7rem;
+    }
+    .mp-vol-pop {
+        position: absolute;
+        bottom: 100%;
+        left: 50%;
+        transform: translateX(-50%);
+        margin-bottom: 0;
+        padding: 0.4rem 0.5rem;
+        padding-bottom: 14px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 0.15rem;
+        background: color-mix(in srgb, var(--color-background) 96%, transparent);
+        backdrop-filter: blur(8px);
+        border: 1px solid color-mix(in srgb, var(--color-foreground) 12%, transparent);
+        border-radius: 6px;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.12s ease;
+        z-index: 9999;
+    }
+    .mp-vol-wrap:hover .mp-vol-pop,
+    .mp-vol-pop:hover,
+    .mp-vol-wrap.vol-open .mp-vol-pop {
+        opacity: 1;
+        pointer-events: auto;
+    }
+    .mp-vol {
+        -webkit-appearance: slider-vertical;
+        appearance: slider-vertical;
+        width: 16px;
+        height: 72px;
+        cursor: pointer;
+        accent-color: var(--color-primary);
+        margin: 0;
+    }
+    .vol-num {
+        font-size: 0.6rem;
+        color: color-mix(in srgb, var(--color-foreground) 50%, transparent);
+    }
+
+    .dot { width: 7px; height: 7px; border-radius: 999px; }
+    .dot.red    { background: #ff5f56; }
+    .dot.yellow { background: #ffbd2e; }
+    .dot.green  { background: #27c93f; }
+</style>

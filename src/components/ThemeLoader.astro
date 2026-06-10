@@ -1,0 +1,82 @@
+---
+/**
+ * Theme Loader Component (MultiTerm style)
+ * 
+ * Loads the saved theme from localStorage before page render.
+ * Supports random theme on homepage visit and theme locking.
+ * Respects user's dark/light theme preference.
+ */
+
+import { ALL_THEME_IDS, DARK_THEME_IDS, LIGHT_THEME_IDS } from '../config/theme-client-data';
+import { DEFAULT_THEME_ID, THEME_STORAGE_KEY } from '../config/theme-runtime';
+import { languages } from '../i18n/locales';
+
+const localeCodes = Object.keys(languages);
+---
+
+<script is:inline define:vars={{ allThemeIds: ALL_THEME_IDS, darkThemeIds: DARK_THEME_IDS, lightThemeIds: LIGHT_THEME_IDS, defaultThemeId: DEFAULT_THEME_ID, themeStorageKey: THEME_STORAGE_KEY, localeCodes }}>
+	(() => {
+		try {
+			const normalizePathname = (pathname) => {
+				const withoutIndex = pathname.replace(/\/index\.html$/, '/');
+				const withoutTrailingSlash = withoutIndex.replace(/\/+$/, '');
+				return withoutTrailingSlash || '/';
+			};
+
+			const currentPath = normalizePathname(window.location.pathname);
+			const homePaths = new Set(['/', ...localeCodes.map((locale) => `/${locale}`)]);
+			const isHomePage = homePaths.has(currentPath);
+			const isLocked = localStorage.getItem('theme-locked') === 'true';
+			const themePreference = localStorage.getItem('theme-preference') || 'dark';
+			const storedTheme = localStorage.getItem(themeStorageKey);
+			let resolvedTheme = storedTheme && allThemeIds.includes(storedTheme) ? storedTheme : defaultThemeId;
+
+			if (isHomePage && !isLocked) {
+				const preferredPool = themePreference === 'light' ? lightThemeIds : darkThemeIds;
+				const themePool = preferredPool.length > 0 ? preferredPool : allThemeIds;
+				const randomIndex = Math.floor(Math.random() * themePool.length);
+				resolvedTheme = themePool[randomIndex];
+			}
+
+			document.documentElement.setAttribute('data-theme', resolvedTheme);
+		} catch {
+			document.documentElement.setAttribute('data-theme', defaultThemeId);
+		}
+	})();
+</script>
+
+<script>
+	import { DEFAULT_THEME_ID, THEME_STORAGE_KEY } from '../config/theme-runtime';
+	import { ALL_THEME_IDS } from '../config/theme-client-data';
+	import {
+		configureThemeBus,
+		getCurrentTheme,
+		isValidThemeId,
+		setCurrentTheme,
+	} from '../lib/theme-bus';
+
+	(function loadTheme() {
+		configureThemeBus({
+			defaultThemeId: DEFAULT_THEME_ID,
+			validThemeIds: ALL_THEME_IDS,
+		});
+
+		let themeToApply = getCurrentTheme();
+
+		// Apply theme if exists
+		setCurrentTheme(themeToApply, {
+			persist: true,
+			source: 'theme-loader-init',
+		});
+
+		// Cross-tab theme synchronization
+		window.addEventListener('storage', (event: StorageEvent) => {
+			if (event.key !== THEME_STORAGE_KEY || !isValidThemeId(event.newValue)) return;
+
+			setCurrentTheme(event.newValue, {
+				persist: false,
+				source: 'storage-sync',
+			});
+		});
+	})();
+</script>

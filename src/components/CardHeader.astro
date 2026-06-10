@@ -1,0 +1,34 @@
+---
+/**
+ * CardHeader Component
+ * Header with icon and title for cards
+ */
+
+import { Icon } from 'astro-icon/components';
+
+interface Props {
+	title: string;
+	icon?: 'user' | 'rss' | 'folder' | 'briefcase' | 'heart';
+}
+
+const { title, icon } = Astro.props;
+
+const icons = {
+	user: 'ph:user-duotone',
+	rss: 'ph:rss-simple-duotone',
+	folder: 'ph:folder-notch-duotone',
+	briefcase: 'ph:briefcase-duotone',
+	heart: 'ph:heart-duotone',
+};
+---
+
+<div class="flex items-center gap-3 mb-4">
+	{icon && (
+		<Icon
+			name={icons[icon]}
+			class="w-5 h-5 text-accent flex-shrink-0 iconify"
+			style="filter: drop-shadow(0 0 4px var(--color-accent))"
+		/>
+	)}
+	<h2 class="text-lg font-semibold text-accent m-0">{title}</h2>
+</div>

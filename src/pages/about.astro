@@ -1,0 +1,302 @@
+---
+import Layout from '../layouts/BlogPost.astro';
+import { defaultLang, resolveLang, type Lang, useTranslations } from '../i18n/config';
+import { AVATAR_URL } from '../consts';
+
+const { lang: langProp } = Astro.props as { lang?: Lang };
+const lang = langProp ?? resolveLang(Astro.url.pathname) ?? defaultLang;
+const t = useTranslations(lang);
+
+const content = {
+    en: {
+        description: 'About me',
+        terminalTitle: 'who am i',
+        terminalLines: [
+            { prompt: 'who am i', output: 'Fubuki' },
+            { prompt: 'identity', output: 'Guitar Player' },
+            { prompt: 'open github', output: 'github.com/RIMECHU' },
+            { prompt: 'mail', output: 'fffreol999@gmail.com' },
+        ],
+        timelineTitle: 'Milestones',
+        timeline: [] as { time: string; desc: string }[],
+        doingTitle: 'What I do',
+        doing: [] as string[],
+        skillsTitle: 'Skills',
+        skills: [] as string[],
+        contactTitle: 'Contact',
+        contact: [] as { label: string; value: string; href: string }[],
+    },
+    zh: {
+        description: '关于我',
+        terminalTitle: 'who am i',
+        terminalLines: [
+            { prompt: 'who am i', output: 'Fubuki' },
+            { prompt: 'identity', output: '吉他手' },
+            { prompt: 'open github', output: 'github.com/RIMECHU' },
+            { prompt: 'mail', output: 'fffreol999@gmail.com' },
+        ],
+        timelineTitle: '里程碑',
+        timeline: [] as { time: string; desc: string }[],
+        doingTitle: '正在做的事',
+        doing: [] as string[],
+        skillsTitle: '技能',
+        skills: [] as string[],
+        contactTitle: '联系方式',
+        contact: [] as { label: string; value: string; href: string }[],
+    },
+} as const;
+
+const d = content[lang] ?? content[defaultLang];
+---
+
+<Layout title={t('about.title')} description={d.description} showTitle={false} lang={lang}>
+    <div class="shell">
+        <!-- ── Hero ── -->
+        <div class="hero">
+            <img
+                src={AVATAR_URL}
+                alt="avatar"
+                class="avatar"
+                width="120"
+                height="120"
+                loading="lazy"
+                decoding="async"
+            />
+            <h1 class="name">Fubuki</h1>
+            <p class="tagline">{d.terminalLines[1]?.output}</p>
+        </div>
+
+        <!-- ── Terminal ── -->
+        <div class="terminal">
+            <div class="term-bar">
+                <span class="dot red"></span>
+                <span class="dot yellow"></span>
+                <span class="dot green"></span>
+                <span class="term-label">{d.terminalTitle}</span>
+            </div>
+            <div class="term-body">
+                {d.terminalLines.map(({ prompt, output }) => (
+                    <div class="term-row">
+                        <span class="term-prompt">$ {prompt}</span>
+                        {output && <span class="term-out">{output}</span>}
+                    </div>
+                ))}
+                <span class="cursor"></span>
+            </div>
+        </div>
+
+        <!-- ── Sections (only render if data exists) ── -->
+        {d.timeline.length > 0 && (
+            <section class="card">
+                <h2>{d.timelineTitle}</h2>
+                <ul class="timeline">
+                    {d.timeline.map(item => (
+                        <li><em>{item.time}</em> — {item.desc}</li>
+                    ))}
+                </ul>
+            </section>
+        )}
+
+        <div class="grid-2">
+            {d.doing.length > 0 && (
+                <div class="card">
+                    <h2>{d.doingTitle}</h2>
+                    <ul class="list">
+                        {d.doing.map(item => (<li>{item}</li>))}
+                    </ul>
+                </div>
+            )}
+            {d.skills.length > 0 && (
+                <div class="card">
+                    <h2>{d.skillsTitle}</h2>
+                    <ul class="pills">
+                        {d.skills.map(item => (<li>{item}</li>))}
+                    </ul>
+                </div>
+            )}
+        </div>
+
+        {d.contact.length > 0 && (
+            <div class="contact-row">
+                {d.contact.map(item => (
+                    <a href={item.href} target="_blank" rel="noopener noreferrer">{item.value}</a>
+                ))}
+            </div>
+        )}
+    </div>
+</Layout>
+
+<style>
+    .shell {
+        max-width: 640px;
+        margin: 0 auto;
+        padding: 4rem 1rem 3rem;
+    }
+
+    /* ── Hero ── */
+    .hero {
+        text-align: center;
+        margin-bottom: 2rem;
+    }
+    .avatar {
+        width: 120px;
+        height: 120px;
+        border-radius: 999px;
+        border: 2px solid color-mix(in srgb, var(--color-primary) 40%, transparent);
+        box-shadow: 0 0 32px color-mix(in srgb, var(--color-primary) 18%, transparent);
+        object-fit: cover;
+    }
+    .name {
+        margin: 1rem 0 0.25rem;
+        font-size: 1.75rem;
+        font-weight: 800;
+        color: var(--color-foreground);
+    }
+    .tagline {
+        margin: 0;
+        font-size: 1rem;
+        color: color-mix(in srgb, var(--color-foreground) 55%, transparent);
+    }
+
+    /* ── Terminal ── */
+    .terminal {
+        border: 1px solid color-mix(in srgb, var(--color-foreground) 10%, transparent);
+        border-radius: 10px;
+        overflow: hidden;
+        font-family: var(--font-mono, monospace);
+        font-size: 0.88rem;
+        margin-bottom: 2rem;
+    }
+    .term-bar {
+        display: flex;
+        align-items: center;
+        gap: 0.35rem;
+        padding: 0.5rem 0.8rem;
+        background: color-mix(in srgb, var(--color-foreground) 5%, transparent);
+        border-bottom: 1px solid color-mix(in srgb, var(--color-foreground) 8%, transparent);
+    }
+    .term-label {
+        margin-left: auto;
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        color: color-mix(in srgb, var(--color-foreground) 40%, transparent);
+    }
+    .dot { width: 9px; height: 9px; border-radius: 999px; }
+    .dot.red    { background: #ff5f56; }
+    .dot.yellow { background: #ffbd2e; }
+    .dot.green  { background: #27c93f; }
+
+    .term-body {
+        padding: 0.9rem 1rem;
+        display: grid;
+        gap: 0.4rem;
+        background: color-mix(in srgb, var(--color-background) 98%, transparent);
+    }
+    .term-row {
+        display: grid;
+        gap: 0.15rem;
+    }
+    .term-prompt {
+        color: var(--color-primary);
+        font-weight: 600;
+    }
+    .term-out {
+        color: color-mix(in srgb, var(--color-foreground) 75%, transparent);
+        padding-left: 0.5rem;
+        border-left: 2px solid color-mix(in srgb, var(--color-primary) 40%, transparent);
+    }
+    .cursor {
+        display: inline-block;
+        width: 0.6em;
+        height: 1.1em;
+        background: var(--color-primary);
+        animation: blink 1s step-end infinite;
+        margin-top: 0.3rem;
+    }
+    @keyframes blink { 50% { opacity: 0; } }
+
+    /* ── Cards ── */
+    .card {
+        border: 1px solid color-mix(in srgb, var(--color-foreground) 8%, transparent);
+        border-radius: 10px;
+        padding: 1.25rem;
+        background: color-mix(in srgb, var(--color-foreground) 2%, transparent);
+        margin-bottom: 1rem;
+    }
+    .card h2 {
+        margin: 0 0 0.75rem;
+        font-size: 1rem;
+        font-weight: 600;
+        color: color-mix(in srgb, var(--color-foreground) 75%, transparent);
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+    }
+
+    .grid-2 {
+        display: grid;
+        gap: 1rem;
+    }
+    .grid-2 > .card { margin-bottom: 0; }
+    @media (min-width: 640px) {
+        .grid-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+
+    /* ── Lists ── */
+    .timeline {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        display: grid;
+        gap: 0.5rem;
+        font-size: 0.93rem;
+    }
+    .timeline em {
+        font-style: normal;
+        color: var(--color-primary-light);
+        font-weight: 600;
+    }
+    .list {
+        padding-left: 1.2rem;
+        margin: 0;
+        display: grid;
+        gap: 0.4rem;
+        font-size: 0.93rem;
+    }
+    .pills {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.35rem;
+    }
+    .pills li {
+        padding: 0.22rem 0.6rem;
+        border: 1px solid color-mix(in srgb, var(--color-foreground) 10%, transparent);
+        border-radius: 999px;
+        font-size: 0.84rem;
+    }
+
+    /* ── Contact ── */
+    .contact-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        margin-top: 1.5rem;
+        justify-content: center;
+    }
+    .contact-row a {
+        padding: 0.4rem 0.9rem;
+        border: 1px solid color-mix(in srgb, var(--color-foreground) 10%, transparent);
+        border-radius: 8px;
+        color: var(--color-foreground);
+        text-decoration: none;
+        font-size: 0.9rem;
+        transition: border-color 0.15s, background 0.15s;
+    }
+    .contact-row a:hover {
+        border-color: var(--color-primary);
+        background: color-mix(in srgb, var(--color-primary) 6%, transparent);
+    }
+</style>

@@ -1,0 +1,95 @@
+---
+// Import the global.css file here so that it is included on
+// all pages through the use of the <BaseHead /> component.
+import '../styles/global.css';
+import type { ImageMetadata } from 'astro';
+import FallbackImage from '../assets/blog-placeholder-1.jpg';
+import ThemeLoader from './ThemeLoader.astro';
+import { SITE_TITLE } from '../consts';
+import { getThemes } from '../config/themes';
+
+interface Props {
+	title: string;
+	description: string;
+	image?: ImageMetadata;
+}
+
+const canonicalURL = new URL(Astro.url.pathname, Astro.site);
+
+const { title, description, image = FallbackImage } = Astro.props;
+
+// Generate theme CSS at build time (MultiTerm style)
+const allThemes = await getThemes();
+
+let cssLines: string[] = [];
+const plainIntroCss = `:root[data-theme="plain-intro"] {
+	--color-background: #f5f5f1;
+	--color-foreground: #1f2933;
+	--color-primary: #1f3a5f;
+	--color-primary-light: #33527a;
+	--color-primary-lightest: #e5e9f2;
+	--color-primary-rgb: 31, 58, 95;
+	--color-accent: #94a3b8;
+	--color-link: #2563eb;
+}`;
+for (const theme of allThemes) {
+	cssLines.push(`:root[data-theme="${theme.id}"] {`);
+	cssLines.push(`  --color-background: ${theme.colors.background};`);
+	cssLines.push(`  --color-foreground: ${theme.colors.foreground};`);
+	cssLines.push(`  --color-primary: ${theme.colors.primary};`);
+	cssLines.push(`  --color-primary-light: ${theme.colors.primaryLight};`);
+	cssLines.push(`  --color-primary-lightest: ${theme.colors.primaryLightest};`);
+	cssLines.push(`  --color-primary-rgb: ${theme.colors.primaryRgb};`);
+	cssLines.push(`  --color-accent: ${theme.colors.accent};`);
+	cssLines.push(`  --color-link: ${theme.colors.link};`);
+	cssLines.push(`}`);
+}
+const generatedCss = [plainIntroCss, cssLines.join('\n')].join('\n');
+---
+
+<!-- Global Metadata -->
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon.png" />
+<link rel="apple-touch-icon" href="/favicon.png" />
+<link rel="sitemap" href="/sitemap-index.xml" />
+<link
+	rel="alternate"
+	type="application/rss+xml"
+	title={SITE_TITLE}
+	href={new URL('blog/rss.xml', Astro.site)}
+/>
+<meta name="generator" content={Astro.generator} />
+
+<!-- Font preloads (match @font-face in global.css) -->
+<link rel="preload" href="/fonts/Geist.woff2" as="font" type="font/woff2" crossorigin />
+<link rel="preload" href="/fonts/GeistMono.woff2" as="font" type="font/woff2" crossorigin />
+
+<!-- Canonical URL -->
+<link rel="canonical" href={canonicalURL} />
+
+<!-- Primary Meta Tags -->
+<title>{title}</title>
+<meta name="title" content={title} />
+<meta name="description" content={description} />
+
+<!-- Open Graph / Facebook -->
+<meta property="og:type" content="website" />
+<meta property="og:url" content={Astro.url} />
+<meta property="og:title" content={title} />
+<meta property="og:description" content={description} />
+<meta property="og:image" content={new URL(image.src, Astro.url)} />
+
+<!-- Twitter -->
+<meta property="twitter:card" content="summary_large_image" />
+<meta property="twitter:url" content={Astro.url} />
+<meta property="twitter:title" content={title} />
+<meta property="twitter:description" content={description} />
+<meta property="twitter:image" content={new URL(image.src, Astro.url)} />
+
+<!-- Auto-generated theme CSS (MultiTerm style) -->
+<style is:inline set:html={generatedCss}></style>
+
+<!-- Theme Loader (must be early to prevent FOUC) -->
+<ThemeLoader />

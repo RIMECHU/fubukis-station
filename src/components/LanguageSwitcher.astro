@@ -1,0 +1,346 @@
+---
+/**
+ * Language Switcher Component
+ * 
+ * A simple language selector that matches the ThemeSelector style.
+ * Uses an icon button trigger with a dropdown menu.
+ */
+
+import { defaultLang, languages, prefixDefaultLocale } from '../i18n/config';
+import type { Lang } from '../i18n/config';
+import { Icon } from 'astro-icon/components';
+
+interface Props {
+  lang?: Lang;
+}
+
+const { lang = defaultLang } = Astro.props;
+const pathname = Astro.url?.pathname || '/';
+const entries = Object.entries(languages) as [Lang, string][];
+const currentLabel = languages[lang] ?? lang;
+
+const localeHref = (path: string, target: Lang) => {
+  const current = path || '/';
+  const base = current.startsWith('/') ? current : `/${current}`;
+  const segments = base.split('/').filter(Boolean);
+  
+  // Strip existing locale segment if present
+  if (segments[0] && Object.hasOwn(languages, segments[0])) {
+    segments.shift();
+  }
+  const normalized = '/' + segments.join('/');
+  const isRoot = normalized === '/';
+
+  // Default locale without prefix when prefixDefaultLocale is false.
+  if (target === defaultLang && !prefixDefaultLocale) {
+    return normalized;
+  }
+
+  return `/${target}${isRoot ? '' : normalized}`;
+};
+---
+
+<div class="inline-flex lang-switcher-wrapper">
+  <!-- Trigger Button - matches ThemeSelector style -->
+  <button
+    class="flex items-center justify-center px-[0.5rem] py-[0.25rem] rounded-md text-foreground hover:text-accent transition-colors duration-150 cursor-pointer nav-trigger"
+    id="lang-switcher-btn"
+    aria-haspopup="listbox"
+    aria-expanded="false"
+    aria-label="Language"
+    title="Language"
+  >
+    <Icon name="ph:translate-duotone" class="w-5 h-5 nav-trigger-icon" />
+    <span class="sr-only">Language</span>
+    <span class="nav-label-mobile">{currentLabel}</span>
+  </button>
+
+  <!-- Dropdown Menu -->
+  <div class="lang-dropdown" data-lang-dropdown>
+    <ul class="lang-menu" role="listbox">
+      {entries.map(([code, label]) => {
+        const href = localeHref(pathname, code);
+        const isActive = code === lang;
+        return (
+          <li>
+            <a
+              href={href}
+              role="option"
+              aria-selected={isActive}
+              class:list={['lang-item', { active: isActive }]}
+            >
+              <span class="lang-code">{code.toUpperCase()}</span>
+              <span class="lang-name">{label}</span>
+              {isActive && <Icon name="ph:check" class="lang-check" />}
+            </a>
+          </li>
+        );
+      })}
+    </ul>
+  </div>
+</div>
+
+<script>
+  // Language Switcher — event delegation (survives ClientRouter SPA navigations)
+  (function() {
+    function getWrapper() {
+      var btn = document.getElementById('lang-switcher-btn');
+      return btn ? btn.closest('.lang-switcher-wrapper') : null;
+    }
+
+    function toggle(wrapper, open) {
+      if (!wrapper) return;
+      var btn = wrapper.querySelector('#lang-switcher-btn');
+      var isOpen = open !== undefined ? open : btn?.getAttribute('aria-expanded') !== 'true';
+      if (btn) btn.setAttribute('aria-expanded', String(isOpen));
+      wrapper.classList.toggle('open', isOpen);
+    }
+
+    function close(wrapper) {
+      toggle(wrapper, false);
+    }
+
+    // Click delegation
+    document.addEventListener('click', function(e) {
+      var target = e.target;
+      if (!target) return;
+
+      // Toggle button
+      var btn = target.closest('#lang-switcher-btn');
+      if (btn) {
+        var wrapper = btn.closest('.lang-switcher-wrapper');
+        if (wrapper) toggle(wrapper);
+        return;
+      }
+
+      // Close any open dropdown when clicking outside
+      var openWrappers = document.querySelectorAll('.lang-switcher-wrapper.open');
+      openWrappers.forEach(function(w) {
+        if (!w.contains(target)) {
+          close(w);
+        }
+      });
+    });
+
+    // Keyboard: Escape to close
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') {
+        var openWrappers = document.querySelectorAll('.lang-switcher-wrapper.open');
+        openWrappers.forEach(function(w) {
+          close(w);
+          var btn = w.querySelector('#lang-switcher-btn');
+          if (btn) btn.focus();
+        });
+      }
+    });
+  })();
+</script>
+
+<style>
+  .lang-switcher-wrapper {
+    position: relative;
+  }
+
+  /* Trigger button - matches ThemeSelector's nav-trigger */
+  #lang-switcher-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.25rem 0.5rem;
+    border-radius: 0.375rem;
+    color: var(--color-foreground);
+    transition: color 150ms ease;
+    cursor: pointer;
+    background: transparent;
+    border: none;
+  }
+
+  #lang-switcher-btn:hover {
+    color: var(--color-accent);
+  }
+
+  .nav-trigger-icon {
+    width: 1.25rem;
+    height: 1.25rem;
+    display: block;
+    /* Fix SVG vertical alignment */
+    vertical-align: middle;
+  }
+
+  /* Ensure SVG inside icon is properly aligned */
+  #lang-switcher-btn :global(svg) {
+    display: block;
+  }
+
+  .nav-label-mobile {
+    display: none;
+    margin-left: 0.5rem;
+  }
+
+  /* Dropdown positioning */
+  .lang-dropdown {
+    position: absolute;
+    top: calc(100% + 0.5rem);
+    right: 0;
+    z-index: 100;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-8px);
+    transition: opacity 150ms ease, transform 150ms ease, visibility 150ms ease;
+  }
+
+  .lang-switcher-wrapper.open .lang-dropdown {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+  }
+
+  /* Menu styling */
+  .lang-menu {
+    min-width: 10rem;
+    padding: 0.375rem;
+    margin: 0;
+    list-style: none;
+    background: var(--color-background);
+    border: 1px solid color-mix(in srgb, var(--color-accent) 30%, transparent);
+    border-radius: 0.5rem;
+    box-shadow: 
+      0 4px 24px color-mix(in srgb, #000 40%, transparent),
+      0 0 1px color-mix(in srgb, var(--color-accent) 30%, transparent);
+  }
+
+  .lang-menu li {
+    margin: 0;
+    padding: 0;
+  }
+
+  .lang-menu li + li {
+    margin-top: 0.125rem;
+  }
+
+  /* Menu item */
+  .lang-item {
+    display: flex;
+    align-items: center;
+    gap: 0.625rem;
+    padding: 0.5rem 0.625rem;
+    text-decoration: none;
+    color: color-mix(in srgb, var(--color-foreground) 75%, transparent);
+    font-size: 0.8125rem;
+    border: 1px solid transparent;
+    border-radius: 0.25rem;
+    transition: all 120ms ease;
+  }
+
+  .lang-item:hover {
+    color: var(--color-foreground);
+    background: color-mix(in srgb, var(--color-accent) 8%, transparent);
+    border-color: color-mix(in srgb, var(--color-accent) 25%, transparent);
+  }
+
+  .lang-item.active {
+    color: var(--color-accent);
+    background: color-mix(in srgb, var(--color-accent) 10%, transparent);
+    border-color: color-mix(in srgb, var(--color-accent) 35%, transparent);
+  }
+
+  /* Language code badge */
+  .lang-code {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 1.75rem;
+    padding: 0.125rem 0.375rem;
+    font-size: 0.6875rem;
+    font-weight: 600;
+    font-family: var(--font-mono, monospace);
+    letter-spacing: 0.05em;
+    background: color-mix(in srgb, var(--color-foreground) 8%, transparent);
+    color: color-mix(in srgb, var(--color-foreground) 60%, transparent);
+    border-radius: 0.25rem;
+    transition: all 120ms ease;
+  }
+
+  .lang-item:hover .lang-code {
+    background: color-mix(in srgb, var(--color-accent) 15%, transparent);
+    color: var(--color-accent);
+  }
+
+  .lang-item.active .lang-code {
+    background: color-mix(in srgb, var(--color-accent) 20%, transparent);
+    color: var(--color-accent);
+  }
+
+  .lang-name {
+    flex: 1;
+  }
+
+  .lang-check {
+    width: 0.875rem;
+    height: 0.875rem;
+    color: var(--color-accent);
+    filter: drop-shadow(0 0 4px var(--color-accent));
+  }
+
+  /* Mobile styles - full width in nav menu */
+  @media (max-width: 639px) {
+    .lang-switcher-wrapper {
+      width: 100%;
+    }
+
+    #lang-switcher-btn {
+      width: 100%;
+      justify-content: flex-start;
+      padding: 0.25rem 0.5rem;
+      font-size: 1.125rem;
+    }
+
+    .nav-label-mobile {
+      display: inline;
+    }
+
+    .lang-dropdown {
+      position: static;
+      width: 100%;
+      margin-top: 0.5rem;
+      transform: none;
+      opacity: 1;
+      visibility: visible;
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 200ms ease;
+    }
+
+    .lang-switcher-wrapper.open .lang-dropdown {
+      max-height: 200px;
+    }
+
+    .lang-menu {
+      border-radius: 0;
+      border: none;
+      border-top: 1px solid color-mix(in srgb, var(--color-accent) 20%, transparent);
+      box-shadow: none;
+      background: transparent;
+      padding: 0.5rem 0;
+    }
+
+    .lang-item {
+      padding: 0.625rem 0.75rem;
+      font-size: 0.9375rem;
+      border-radius: 0;
+    }
+  }
+
+  /* Desktop - dropdown appears on right */
+  @media (min-width: 640px) {
+    .nav-trigger-icon {
+      width: 1.25rem;
+      height: 1.25rem;
+    }
+
+    .lang-dropdown {
+      right: 0;
+      left: auto;
+    }
+  }
+</style>
