@@ -195,6 +195,36 @@ body {
 	font-style: italic;
 }
 
+.blog-back-link {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.35em;
+	margin-bottom: 1.2em;
+	padding: 0.35em 0.85em;
+	font-size: 0.8rem;
+	font-weight: 500;
+	font-family: var(--font-mono, monospace);
+	color: color-mix(in srgb, var(--color-foreground) 70%, transparent);
+	text-decoration: none;
+	border: 1px solid color-mix(in srgb, var(--color-foreground) 12%, transparent);
+	border-radius: 999px;
+	transition: all 0.2s ease;
+	width: fit-content;
+}
+.blog-back-link:hover {
+	color: var(--color-primary);
+	border-color: var(--color-primary);
+	background: color-mix(in srgb, var(--color-primary) 6%, transparent);
+}
+.blog-back-link svg {
+	width: 0.9em;
+	height: 0.9em;
+	transition: transform 0.2s ease;
+}
+.blog-back-link:hover svg {
+	transform: translateX(-2px);
+}
+
 /* Removed fixed width constraint - now handled per-page */
 
 h1,

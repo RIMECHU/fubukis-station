@@ -11,6 +11,7 @@ export const blog: Record<SupportedLang, Record<string, string>> = {
     'blog.clearTags': 'Clear tag filter',
     'blog.clearDate': 'Clear date filter',
     'blog.lastUpdated': 'Last updated on',
+    'blog.back': 'Back to Blog',
   },
   zh: {
     'blog.filters': '筛选',
@@ -22,5 +23,6 @@ export const blog: Record<SupportedLang, Record<string, string>> = {
     'blog.clearTags': '清除标签筛选',
     'blog.clearDate': '清除日期筛选',
     'blog.lastUpdated': '最近更新',
+    'blog.back': '返回博客',
   },
 };

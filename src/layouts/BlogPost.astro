@@ -8,6 +8,7 @@ import Header from '../components/Header.astro';
 import TableOfContents from '../components/TableOfContents.astro';
 import Background from '../components/Background.astro';
 import { ClientRouter } from 'astro:transitions';
+import { getRelativeLocaleUrl } from 'astro:i18n';
 import MusicPlayer from '../components/MusicPlayer.astro';
 import Giscus from '../components/Giscus.astro';
 import ShareButton from '../components/ShareButton.astro';
@@ -23,6 +24,7 @@ type Props = Partial<CollectionEntry<'blog'>['data']> & {
 
 const { title, description, pubDate, updatedDate, heroImage, headings = [], showTitle = true, lang: langProp } = Astro.props;
 const lang = langProp ?? resolveLang(Astro.url.pathname) ?? defaultLang;
+const blogUrl = getRelativeLocaleUrl(lang, 'blog');
 const t = useTranslations(lang);
 ---
 
@@ -43,6 +45,7 @@ const t = useTranslations(lang);
 					</div>
 				)}
 				<div class="prose blog-post-prose">
+					<a href={blogUrl} class="blog-back-link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>{t("blog.back")}</a>
 					{(showTitle || pubDate || updatedDate) && (
 						<div class="title blog-post-title">
 							{(pubDate || updatedDate) && (
