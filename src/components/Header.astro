@@ -7,7 +7,7 @@ import type { AstroComponentFactory } from 'astro/runtime/server/index.js';
 import { defaultLang, useTranslations, getRelativeLocaleUrl } from '../i18n/config';
 import type { Lang } from '../i18n/config';
 
-type NavItem = 
+type NavItem =
 	| { type: 'link'; name: string; href: string }
 	| { type: 'component'; component: AstroComponentFactory; class?: string };
 
@@ -52,7 +52,7 @@ const items = [
 						</li>
 					)}
 					{index < items.length - 1 && (
-						<li class="nav-separator hidden sm:inline text-[color-mix(in_srgb,var(--color-foreground)_70%,transparent)] select-none">/</li>
+						<li class="nav-separator hidden sm:inline text-[color-mix(in_srgb,var(--color-foreground)_40%,transparent)] select-none">/</li>
 					)}
 				</>
 			))}
@@ -77,24 +77,24 @@ const items = [
 		backdrop-filter: blur(10px);
 		background: color-mix(in srgb, var(--color-background) 95%, transparent);
 	}
-	
+
 	.header-nav[data-scroll-direction="down"] {
 		transform: translateY(-100%);
 	}
-	
+
 	.header-nav[data-scroll-direction="up"] {
 		transform: translateY(0);
 	}
-	
+
 	.header-nav a {
-		color: var(--color-foreground);
+		color: color-mix(in srgb, var(--color-foreground) 80%, transparent);
 		text-decoration: none;
 	}
 
 	.header-nav li:hover > a,
 	.header-nav li:focus-within > a {
-		color: var(--color-foreground);
-		background-color: var(--color-accent)
+		color: var(--color-primary);
+		background-color: color-mix(in srgb, var(--color-primary) 10%, transparent);
 	}
 
 	.nav-link {
@@ -102,7 +102,8 @@ const items = [
 		padding: 0.25rem 0.5rem;
 		font-size: 1.125rem;
 		line-height: 1.5;
-		color: var(--color-foreground);
+		border-radius: 6px;
+		color: color-mix(in srgb, var(--color-foreground) 80%, transparent);
 		transition: color 150ms ease, background-color 150ms ease;
 	}
 
@@ -215,12 +216,12 @@ const items = [
 			display: none;
 		}
 	}
-	
+
 	.mobile-menu-toggle {
 		position: relative;
 		z-index: 60;
 	}
-	
+
 	/* Add padding to body to prevent content from being hidden under fixed nav */
 	:global(body) {
 		padding-top: 4rem;
@@ -241,15 +242,15 @@ const items = [
 			toggle.setAttribute('aria-expanded', isOpen ? 'false' : 'true');
 		});
 	}
-	
+
 	// Close menu when clicking outside (mobile only)
 	document.addEventListener('click', (e) => {
 		// Only on mobile (when toggle is visible)
 		if (window.innerWidth >= 640) return;
-		
+
 		if (nav && navList && toggle) {
 			const isOpen = nav.getAttribute('data-open') === 'true';
-			
+
 			// If menu is open and click is outside nav and toggle button
 			if (isOpen && !navList.contains(e.target) && !toggle.contains(e.target)) {
 				nav.setAttribute('data-open', 'false');
@@ -257,15 +258,15 @@ const items = [
 			}
 		}
 	});
-	
+
 	// Auto-hide/show nav on scroll
 	let lastScrollTop = 0;
 	let ticking = false;
 	const scrollThreshold = 100; // 开始隐藏导航栏的滚动距离
-	
+
 	function updateNavOnScroll() {
 		const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-		
+
 		// 如果在页面顶部附近，始终显示导航栏
 		if (scrollTop < scrollThreshold) {
 			nav.setAttribute('data-scroll-direction', 'up');
@@ -276,11 +277,11 @@ const items = [
 			// 向上滚动 - 显示导航栏
 			nav.setAttribute('data-scroll-direction', 'up');
 		}
-		
+
 		lastScrollTop = scrollTop <= 0 ? 0 : scrollTop;
 		ticking = false;
 	}
-	
+
 	window.addEventListener('scroll', () => {
 		if (!ticking) {
 			window.requestAnimationFrame(updateNavOnScroll);
