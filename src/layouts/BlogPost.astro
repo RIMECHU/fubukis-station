@@ -22,7 +22,7 @@ type Props = Partial<CollectionEntry<'blog'>['data']> & {
   	lang?: Lang;
 };
 
-const { title, description, pubDate, updatedDate, heroImage, headings = [], showTitle = true, lang: langProp } = Astro.props;
+const { title, description, pubDate, updatedDate, heroImage, headings = [], showTitle = true, showBackLink = true, lang: langProp } = Astro.props;
 const lang = langProp ?? resolveLang(Astro.url.pathname) ?? defaultLang;
 const blogUrl = getRelativeLocaleUrl(lang, 'blog');
 const t = useTranslations(lang);
@@ -45,7 +45,7 @@ const t = useTranslations(lang);
 					</div>
 				)}
 				<div class="prose blog-post-prose">
-					<a href={blogUrl} class="blog-back-link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>{t("blog.back")}</a>
+					{showBackLink && <a href={blogUrl} class="blog-back-link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>{t("blog.back")}</a>}
 					{(showTitle || pubDate || updatedDate) && (
 						<div class="title blog-post-title">
 							{(pubDate || updatedDate) && (

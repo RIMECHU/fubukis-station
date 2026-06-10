@@ -49,7 +49,7 @@ const content = {
 const d = content[lang] ?? content[defaultLang];
 ---
 
-<Layout title={t('about.title')} description={d.description} showTitle={false} lang={lang}>
+<Layout title={t('about.title')} description={d.description} showTitle={false} showBackLink={false} lang={lang}>
     <div class="shell">
         <!-- ── Hero ── -->
         <div class="hero">
