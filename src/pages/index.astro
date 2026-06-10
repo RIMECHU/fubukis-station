@@ -1,5 +1,7 @@
 ---
 import PageLayout from '../layouts/PageLayout.astro';
+import Card from '../components/Card.astro';
+import CardHeader from '../components/CardHeader.astro';
 import LatestPosts from '../components/LatestPosts.astro';
 import { SITE_DESCRIPTION, SITE_TITLE, USER_NAME, AVATAR_URL } from '../consts';
 import { SOCIAL_LINKS, getQuickInfo } from '../config/profile';
@@ -147,17 +149,10 @@ const t = useTranslations(lang);
             <!-- Latest Posts -->
             {posts.length > 0 && (
                 <div class="landing-section delay-400">
-                    <div class="terminal">
-                        <div class="term-bar">
-                            <span class="dot red"></span>
-                            <span class="dot yellow"></span>
-                            <span class="dot green"></span>
-                            <span class="term-label">{t('home.latestPosts')}</span>
-                        </div>
-                        <div class="term-body">
-                            <LatestPosts posts={posts} lang={lang} />
-                        </div>
-                    </div>
+                    <Card>
+                        <CardHeader title={t('home.latestPosts')} />
+                        <LatestPosts posts={posts} lang={lang} />
+                    </Card>
                 </div>
             )}
         </main>
