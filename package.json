@@ -7,7 +7,8 @@
     "preview": "astro preview",
     "astro": "astro",
     "generate:themes": "tsx scripts/generate-theme-colors.ts",
-    "i18n:check": "node scripts/check-translations.cjs"
+    "i18n:check": "node scripts/check-translations.cjs",
+    "screenshot": "node scripts/screenshot.cjs"
   },
   "dependencies": {
     "@astrojs/check": "^0.9.6",
@@ -47,6 +48,7 @@
     "@types/sanitize-html": "^2",
     "chrome-launcher": "^1.2.1",
     "edgeone": "^1.5.9",
+    "puppeteer": "^25.1.0",
     "tailwindcss": "^4.1.17",
     "tsx": "^4.21.0",
     "typescript": "^5.9.3",
