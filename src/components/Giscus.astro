@@ -100,6 +100,14 @@ const { repo, repoId, category, categoryId, reactionsEnabled, inputPosition, lan
 	loadGiscus();
 	onThemeChange(async (detail) => {
 		await updateGiscusTheme(detail.themeId);
+
+		// Re-init after SPA navigations (ClientRouter / View Transitions)
+		document.addEventListener("astro:after-swap", function() {
+			var container = document.querySelector(".giscus-container");
+			if (container && !container.querySelector("iframe.giscus-frame")) {
+				loadGiscus();
+			}
+		});
 	});
 </script>
 

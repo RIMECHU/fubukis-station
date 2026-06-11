@@ -1,79 +1,325 @@
 ---
 import PageLayout from '../layouts/PageLayout.astro';
-import Card from '../components/Card.astro';
-import CardHeader from '../components/CardHeader.astro';
-import LinkCard from '../components/LinkCard.astro';
 import { SITE_TITLE } from '../consts';
-import { getLinksByLang } from '../config/links';
 import { defaultLang, resolveLang, useTranslations } from '../i18n/config';
 import type { Lang } from '../i18n/config';
-
-// Seeded random number generator (using mulberry32)
-function seededRandom(seed: number) {
-	return function() {
-		seed = (seed + 0x6D2B79F5) | 0;
-		let t = Math.imul(seed ^ (seed >>> 15), 1 | seed);
-		t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
-		return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
-	};
-}
-
-// Shuffle array with seeded random
-function shuffleWithSeed<T>(array: T[], seed: number): T[] {
-	const shuffled = [...array];
-	const rng = seededRandom(seed);
-	
-	for (let i = shuffled.length - 1; i > 0; i--) {
-		const j = Math.floor(rng() * (i + 1));
-		[shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
-	}
-	
-	return shuffled;
-}
-
-// Get current 30-minute window as seed
-// This ensures the order changes every 30 minutes but stays the same within each 30-minute window
-const thirtyMinutesInMs = 30 * 60 * 1000;
-const seed = Math.floor(Date.now() / thirtyMinutesInMs);
-
+import { getAllVideos, getAllTags, getVideoYears } from '../config/videos';
+import type { VideoEntry } from '../config/videos';
 
 const { lang: langProp } = Astro.props as { lang?: Lang };
 const lang = langProp ?? resolveLang(Astro.url.pathname) ?? defaultLang;
 
-// Shuffle the links list
-const shuffledLinks = shuffleWithSeed(getLinksByLang(lang), seed);
+const videos = getAllVideos();
+const allTags = getAllTags();
+const years = getVideoYears();
 
 const t = useTranslations(lang);
 ---
 
-<PageLayout 
-	title={`${t('links.friends.title')} - ${SITE_TITLE}`} 
+<PageLayout
+	title={`${t('links.friends.title')} - ${SITE_TITLE}`}
 	description={t('links.friends.description')}
 	lang={lang}
-	class="w-full max-w-[960px] mx-auto py-3 md:py-8 px-0 md:px-4"
+	class="w-full max-w-[1280px] mx-auto py-3 md:py-8 px-2 md:px-4"
 >
-	<Card>
-		<CardHeader title={t('links.friends.title')} icon="heart" />
-		<div class="links-container">
-			{shuffledLinks.map((link) => (
-				<LinkCard {...link} />
-			))}
-		</div>
-	</Card>
+	<div class="cover-layout">
+		<!-- Left: Tags -->
+		<aside class="cover-sidebar cover-sidebar-left" data-cover-tags>
+			<div class="cover-filter-section">
+				<h3 class="cover-filter-title">{t('links.tags')}</h3>
+				<button class="cover-tag cover-tag-active" data-tag="all">{t('links.all')}</button>
+				{allTags.map(tag => (
+					<button class="cover-tag" data-tag={tag}>{tag}</button>
+				))}
+			</div>
+		</aside>
+
+		<!-- Center: Video Grid -->
+		<main class="cover-main">
+			<div class="cover-grid" data-cover-grid>
+				{videos.map(video => (
+					<article class="cover-card" data-tags={video.tags.join(',')} data-year={video.date.slice(0, 4)}>
+						<a
+							href={`https://www.youtube.com/watch?v=${video.youtubeId}`}
+							target="_blank"
+							rel="noopener noreferrer"
+							class="cover-card-link"
+						>
+							<div class="cover-thumb">
+								<img
+									src={`https://img.youtube.com/vi/${video.youtubeId}/mqdefault.jpg`}
+									alt={video.title}
+									loading="lazy"
+									width="320"
+									height="180"
+								/>
+								<div class="cover-play-overlay">
+									<svg viewBox="0 0 24 24" fill="white" width="36" height="36"><path d="M8 5v14l11-7z"/></svg>
+								</div>
+							</div>
+							<div class="cover-card-body">
+								<h3 class="cover-card-title">{video.title}</h3>
+								<time class="cover-card-date">{video.date}</time>
+								<div class="cover-card-tags">
+									{video.tags.slice(0, 2).map(tag => (
+										<span class="cover-card-tag">{tag}</span>
+									))}
+								</div>
+							</div>
+						</a>
+					</article>
+				))}
+			</div>
+		</main>
+
+		<!-- Right: Date Nav -->
+		<aside class="cover-sidebar cover-sidebar-right" data-cover-dates>
+			<div class="cover-filter-section">
+				<h3 class="cover-filter-title">{t('links.date')}</h3>
+				<button class="cover-tag cover-tag-active" data-year="all">{t('links.all')}</button>
+				{years.map(year => (
+					<button class="cover-tag" data-year={year}>{year}</button>
+				))}
+			</div>
+		</aside>
+	</div>
 </PageLayout>
 
+<script>
+	(function() {
+		var tagButtons = document.querySelectorAll('[data-cover-tags] .cover-tag');
+		var dateButtons = document.querySelectorAll('[data-cover-dates] .cover-tag');
+		var cards = document.querySelectorAll('[data-cover-grid] .cover-card');
+
+		var activeTag = 'all';
+		var activeYear = 'all';
+
+		function filter() {
+			cards.forEach(function(card) {
+				var tags = (card.getAttribute('data-tags') || '').split(',');
+				var year = card.getAttribute('data-year') || '';
+				var tagMatch = activeTag === 'all' || tags.includes(activeTag);
+				var yearMatch = activeYear === 'all' || year === activeYear;
+				card.style.display = (tagMatch && yearMatch) ? '' : 'none';
+			});
+		}
+
+		tagButtons.forEach(function(btn) {
+			btn.addEventListener('click', function() {
+				tagButtons.forEach(function(b) { b.classList.remove('cover-tag-active'); });
+				btn.classList.add('cover-tag-active');
+				activeTag = btn.getAttribute('data-tag') || 'all';
+				filter();
+			});
+		});
+
+		dateButtons.forEach(function(btn) {
+			btn.addEventListener('click', function() {
+				dateButtons.forEach(function(b) { b.classList.remove('cover-tag-active'); });
+				btn.classList.add('cover-tag-active');
+				activeYear = btn.getAttribute('data-year') || 'all';
+				filter();
+			});
+		});
+	})();
+</script>
+
 <style>
-	.links-container {
+	.cover-layout {
 		display: grid;
 		grid-template-columns: 1fr;
-		gap: 1rem;
-		padding: 0;
+		gap: 1.25rem;
 	}
 
 	@media (min-width: 768px) {
-		.links-container {
-			grid-template-columns: repeat(1, 1fr);
-			gap: 1rem;
+		.cover-layout {
+			grid-template-columns: 170px 1fr 140px;
+			align-items: start;
+			gap: 1.5rem;
 		}
+	}
+
+	@media (min-width: 1024px) {
+		.cover-layout {
+			grid-template-columns: 180px 1fr 150px;
+			gap: 2rem;
+		}
+	}
+
+	/* Sidebars */
+	.cover-sidebar {
+		position: sticky;
+		top: 5rem;
+	}
+	.cover-sidebar-left { order: 1; }
+	.cover-main       { order: 2; }
+	.cover-sidebar-right { order: 3; }
+
+	@media (max-width: 767px) {
+		.cover-sidebar-left  { order: 2; position: static; }
+		.cover-main          { order: 1; }
+		.cover-sidebar-right { order: 3; position: static; }
+		.cover-layout {
+			grid-template-columns: 1fr;
+		}
+		.cover-filter-section {
+			display: flex;
+			flex-wrap: wrap;
+			gap: 0.35rem;
+			align-items: center;
+		}
+		.cover-filter-title {
+			width: 100%;
+			margin-bottom: 0.25rem;
+		}
+	}
+
+	.cover-filter-section {
+		margin-bottom: 1rem;
+	}
+	.cover-filter-title {
+		margin: 0 0 0.5rem;
+		font-size: 0.75rem;
+		font-weight: 600;
+		text-transform: uppercase;
+		letter-spacing: 0.08em;
+		color: color-mix(in srgb, var(--color-foreground) 50%, transparent);
+		font-family: var(--font-mono, monospace);
+	}
+
+	/* Tag / Year buttons */
+	.cover-tag {
+		display: block;
+		width: 100%;
+		padding: 0.3rem 0.6rem;
+		margin-bottom: 0.25rem;
+		font-size: 0.78rem;
+		font-family: var(--font-mono, monospace);
+		color: color-mix(in srgb, var(--color-foreground) 70%, transparent);
+		background: transparent;
+		border: 1px solid transparent;
+		border-radius: 6px;
+		cursor: pointer;
+		text-align: left;
+		transition: all 0.15s ease;
+	}
+	.cover-tag:hover {
+		color: var(--color-primary);
+		background: color-mix(in srgb, var(--color-primary) 5%, transparent);
+	}
+	.cover-tag-active {
+		color: var(--color-primary);
+		background: color-mix(in srgb, var(--color-primary) 10%, transparent);
+		border-color: color-mix(in srgb, var(--color-primary) 30%, transparent);
+	}
+
+	/* Video Grid */
+	.cover-grid {
+		display: grid;
+		grid-template-columns: 1fr;
+		gap: 1rem;
+	}
+	@media (min-width: 640px) {
+		.cover-grid {
+			grid-template-columns: repeat(2, 1fr);
+		}
+	}
+	@media (min-width: 1024px) {
+		.cover-grid {
+			grid-template-columns: repeat(2, 1fr);
+			gap: 1.25rem;
+		}
+	}
+
+	/* Video Card */
+	.cover-card {
+		border: 1px solid color-mix(in srgb, var(--color-foreground) 10%, transparent);
+		border-radius: 10px;
+		overflow: hidden;
+		background: color-mix(in srgb, var(--color-background) 98%, transparent);
+		transition: all 0.2s ease;
+	}
+	.cover-card:hover {
+		border-color: color-mix(in srgb, var(--color-primary) 35%, transparent);
+		transform: translateY(-2px);
+		box-shadow: 0 4px 16px color-mix(in srgb, var(--color-primary) 10%, transparent);
+	}
+
+	.cover-card-link {
+		text-decoration: none;
+		color: inherit;
+		display: block;
+	}
+
+	.cover-thumb {
+		position: relative;
+		aspect-ratio: 16/9;
+		background: #0d0d0d;
+		overflow: hidden;
+	}
+	.cover-thumb img {
+		width: 100%;
+		height: 100%;
+		object-fit: cover;
+		transition: transform 0.3s ease;
+	}
+	.cover-card:hover .cover-thumb img {
+		transform: scale(1.04);
+	}
+
+	.cover-play-overlay {
+		position: absolute;
+		inset: 0;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		background: rgba(0,0,0,0.3);
+		opacity: 0;
+		transition: opacity 0.2s ease;
+	}
+	.cover-card:hover .cover-play-overlay {
+		opacity: 1;
+	}
+
+	.cover-card-body {
+		padding: 0.7rem 0.85rem;
+	}
+	.cover-card-title {
+		margin: 0;
+		font-size: 0.85rem;
+		font-weight: 600;
+		color: var(--color-foreground);
+		line-height: 1.4;
+		transition: color 0.2s ease;
+		display: -webkit-box;
+		-webkit-line-clamp: 2;
+		-webkit-box-orient: vertical;
+		overflow: hidden;
+	}
+	.cover-card:hover .cover-card-title {
+		color: var(--color-primary);
+	}
+
+	.cover-card-date {
+		display: block;
+		margin-top: 0.25rem;
+		font-size: 0.7rem;
+		color: color-mix(in srgb, var(--color-foreground) 45%, transparent);
+		font-family: var(--font-mono, monospace);
+	}
+
+	.cover-card-tags {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.3rem;
+		margin-top: 0.4rem;
+	}
+	.cover-card-tag {
+		padding: 0.1rem 0.4rem;
+		font-size: 0.62rem;
+		font-family: var(--font-mono, monospace);
+		color: color-mix(in srgb, var(--color-primary) 75%, transparent);
+		background: color-mix(in srgb, var(--color-primary) 8%, transparent);
+		border-radius: 999px;
 	}
 </style>

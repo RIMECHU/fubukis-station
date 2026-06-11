@@ -6,15 +6,15 @@
 import { SITE_URL } from '../consts';
 
 export const giscusConfig = {
-	repo: 'MuelNova/Blog',
-	repoId: 'R_kgDOIXU0aA',
+	repo: 'RIMECHU/fubukis-station',
+	repoId: 'R_kgDOS2eDxA',
 	category: 'Announcements',
-	categoryId: 'DIC_kwDOIXU0aM4CXB7m',
+	categoryId: 'DIC_kwDOS2eDxM4C-8UL',
 	reactionsEnabled: true,
-	inputPosition: 'top' as const,
-	lang: 'zh-CN', // 中文
+	inputPosition: 'bottom' as const,
+	lang: 'zh-CN',
 	loading: 'lazy' as const,
-    siteUrl: SITE_URL
+	siteUrl: SITE_URL,
 };
 
 export default giscusConfig;
