@@ -1,5 +1,4 @@
 <div align="center">
-  <img align="right" width="350" src="public/1.png" >
 
   # ❄️ Fubuki's Station
 
@@ -11,6 +10,9 @@
   [![License](https://img.shields.io/badge/License-MIT-green)](./LICENSE)
 
   🌐 **[fubuki.asia](https://fubuki.asia)**
+
+  <br>
+  <img width="800" src="public/1.png" style="border-radius: 12px; border: 1px solid #30363d;">
 </div>
 
 ---
