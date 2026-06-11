@@ -116,7 +116,7 @@ const TITLE = 'TK from 凛として時雨 - an artist';
             }).catch(function() {
                 updatePlayUI();
                 // Autoplay blocked — start on first user interaction
-                var events = ['touchstart', 'keydown'];
+                var events = ['click', 'touchstart', 'keydown', 'scroll'];
                 function onInteract() {
                     doFadeIn();
                     events.forEach(function(e) { document.removeEventListener(e, onInteract); });
