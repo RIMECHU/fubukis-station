@@ -12,7 +12,7 @@
   🌐 **[fubuki.asia](https://fubuki.asia)**
 
   <br>
-  <img width="800" src="public/1.png" style="border-radius: 12px; border: 1px solid #30363d;">
+  <img width="800" src="public/_preview.png" style="border-radius: 12px; border: 1px solid #30363d;">
 </div>
 
 ---
