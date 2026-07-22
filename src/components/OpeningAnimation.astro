@@ -29,9 +29,9 @@
             </radialGradient>
 
             <!-- Crescent carve mask -->
-            <mask id="crescentMask">
+            <mask id="crescentMask" maskUnits="userSpaceOnUse" x="0" y="0" width="1920" height="1080">
                 <rect width="1920" height="1080" fill="white"/>
-                <circle cx="1652" cy="212" r="118" fill="black"/>
+                <circle cx="1662" cy="218" r="112" fill="black"/>
             </mask>
 
             <!-- Moon glow -->
@@ -70,8 +70,10 @@
         <!-- ── Crescent Moon ── -->
         <g id="moon-group">
             <circle id="moon-halo" cx="1700" cy="240" r="330" fill="url(#moonHalo)"/>
-            <g mask="url(#crescentMask)">
-                <circle cx="1700" cy="240" r="132" fill="url(#moonGrad)" filter="url(#moonGlow)" opacity="0.95"/>
+            <g filter="url(#moonGlow)">
+                <g mask="url(#crescentMask)">
+                    <circle cx="1700" cy="240" r="132" fill="url(#moonGrad)" opacity="0.95"/>
+                </g>
             </g>
         </g>
 
@@ -193,8 +195,8 @@
 <script>
     const LETTERS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%&';
 
-    // Cute skull (💀 motif), pointing up
-    const SKULL_HEAD = 'M0,-15 C-10,-15 -16,-8 -16,1 C-16,7 -13,11 -9,13 L-9,18 L-4,18 L-4,14 L0,14 L0,18 L4,18 L4,14 L9,14 L9,18 L9,13 C13,11 16,7 16,1 C16,-8 10,-15 0,-15 Z';
+    // Cute round skull (💀 motif), pointing up
+    const SKULL_HEAD = 'M0,-16 C-11,-16 -17,-9 -17,0 C-17,6 -14,10 -10,12 L-10,17 L-5,17 L-5,13 L0,13 L0,17 L5,17 L5,13 L10,13 L10,17 L10,12 C14,10 17,6 17,0 C17,-9 11,-16 0,-16 Z';
 
     // Kuromu's member color + bone palette
     const WISP_COLORS = [
@@ -332,17 +334,38 @@
             head.setAttribute('d', SKULL_HEAD);
             head.setAttribute('fill', BONE_COLOR);
             g.appendChild(head);
+            // big sparkly eyes
             const eyeL = document.createElementNS(svgNS, 'circle');
             const eyeR = document.createElementNS(svgNS, 'circle');
-            eyeL.setAttribute('cx', '-5.5'); eyeL.setAttribute('cy', '1'); eyeL.setAttribute('r', '3');
-            eyeR.setAttribute('cx', '5.5'); eyeR.setAttribute('cy', '1'); eyeR.setAttribute('r', '3');
+            eyeL.setAttribute('cx', '-6'); eyeL.setAttribute('cy', '0'); eyeL.setAttribute('r', '4');
+            eyeR.setAttribute('cx', '6'); eyeR.setAttribute('cy', '0'); eyeR.setAttribute('r', '4');
             eyeL.setAttribute('fill', '#0a0e1a'); eyeR.setAttribute('fill', '#0a0e1a');
             g.appendChild(eyeL);
             g.appendChild(eyeR);
+            const hlL = document.createElementNS(svgNS, 'circle');
+            const hlR = document.createElementNS(svgNS, 'circle');
+            hlL.setAttribute('cx', '-7.3'); hlL.setAttribute('cy', '-1.4'); hlL.setAttribute('r', '1.3');
+            hlR.setAttribute('cx', '4.7'); hlR.setAttribute('cy', '-1.4'); hlR.setAttribute('r', '1.3');
+            hlL.setAttribute('fill', '#ffffff'); hlR.setAttribute('fill', '#ffffff');
+            g.appendChild(hlL);
+            g.appendChild(hlR);
+            // tiny nose
             const nose = document.createElementNS(svgNS, 'path');
-            nose.setAttribute('d', 'M0,6 L-1.8,10 L1.8,10 Z');
+            nose.setAttribute('d', 'M0,5.5 L-1.6,9 L1.6,9 Z');
             nose.setAttribute('fill', '#0a0e1a');
+            nose.setAttribute('opacity', '0.7');
             g.appendChild(nose);
+            // blush
+            const blushL = document.createElementNS(svgNS, 'ellipse');
+            const blushR = document.createElementNS(svgNS, 'ellipse');
+            blushL.setAttribute('cx', '-10.5'); blushL.setAttribute('cy', '6.5');
+            blushR.setAttribute('cx', '10.5'); blushR.setAttribute('cy', '6.5');
+            blushL.setAttribute('rx', '2.6'); blushL.setAttribute('ry', '1.5');
+            blushR.setAttribute('rx', '2.6'); blushR.setAttribute('ry', '1.5');
+            blushL.setAttribute('fill', '#c9a0dc'); blushR.setAttribute('fill', '#c9a0dc');
+            blushL.setAttribute('opacity', '0.6'); blushR.setAttribute('opacity', '0.6');
+            g.appendChild(blushL);
+            g.appendChild(blushR);
 
             const p: Wisp = {
                 el: g, kind: 'skull',
