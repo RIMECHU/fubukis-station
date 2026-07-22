@@ -13,12 +13,13 @@ import { getPostBaseId } from '../i18n/i18n';
 interface Props {
 	posts: CollectionEntry<'blog'>[];
 	lang?: import('../i18n/config').Lang;
+	layout?: 'list' | 'grid';
 }
 
-const { posts, lang } = Astro.props;
+const { posts, lang, layout = 'list' } = Astro.props;
 ---
 
-<div class="post-list">
+<div class:list={['post-list', { 'post-list-grid': layout === 'grid' }]}>
 	{posts.map((post, i) => (
 		<a
 			href={lang ? getRelativeLocaleUrl(lang, `/blog/${getPostBaseId(post)}/`) : `/blog/${getPostBaseId(post)}/`}
@@ -52,6 +53,14 @@ const { posts, lang } = Astro.props;
 		display: flex;
 		flex-direction: column;
 		gap: 0.5rem;
+	}
+
+	@media (min-width: 768px) {
+		.post-list-grid {
+			display: grid;
+			grid-template-columns: 1fr 1fr;
+			align-items: stretch;
+		}
 	}
 
 	.post-card {
