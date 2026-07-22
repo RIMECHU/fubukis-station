@@ -1,42 +1,20 @@
 ---
 /**
  * Theme Loader Component (MultiTerm style)
- * 
+ *
  * Loads the saved theme from localStorage before page render.
- * Supports random theme on homepage visit and theme locking.
- * Respects user's dark/light theme preference.
+ * Falls back to the default (dusty blue) theme.
  */
 
-import { ALL_THEME_IDS, DARK_THEME_IDS, LIGHT_THEME_IDS } from '../config/theme-client-data';
+import { ALL_THEME_IDS } from '../config/theme-client-data';
 import { DEFAULT_THEME_ID, THEME_STORAGE_KEY } from '../config/theme-runtime';
-import { languages } from '../i18n/locales';
-
-const localeCodes = Object.keys(languages);
 ---
 
-<script is:inline define:vars={{ allThemeIds: ALL_THEME_IDS, darkThemeIds: DARK_THEME_IDS, lightThemeIds: LIGHT_THEME_IDS, defaultThemeId: DEFAULT_THEME_ID, themeStorageKey: THEME_STORAGE_KEY, localeCodes }}>
+<script is:inline define:vars={{ allThemeIds: ALL_THEME_IDS, defaultThemeId: DEFAULT_THEME_ID, themeStorageKey: THEME_STORAGE_KEY }}>
 	(() => {
 		try {
-			const normalizePathname = (pathname) => {
-				const withoutIndex = pathname.replace(/\/index\.html$/, '/');
-				const withoutTrailingSlash = withoutIndex.replace(/\/+$/, '');
-				return withoutTrailingSlash || '/';
-			};
-
-			const currentPath = normalizePathname(window.location.pathname);
-			const homePaths = new Set(['/', ...localeCodes.map((locale) => `/${locale}`)]);
-			const isHomePage = homePaths.has(currentPath);
-			const isLocked = localStorage.getItem('theme-locked') === 'true';
-			const themePreference = localStorage.getItem('theme-preference') || 'dark';
 			const storedTheme = localStorage.getItem(themeStorageKey);
-			let resolvedTheme = storedTheme && allThemeIds.includes(storedTheme) ? storedTheme : defaultThemeId;
-
-			if (isHomePage && !isLocked) {
-				const preferredPool = themePreference === 'light' ? lightThemeIds : darkThemeIds;
-				const themePool = preferredPool.length > 0 ? preferredPool : allThemeIds;
-				const randomIndex = Math.floor(Math.random() * themePool.length);
-				resolvedTheme = themePool[randomIndex];
-			}
+			const resolvedTheme = storedTheme && allThemeIds.includes(storedTheme) ? storedTheme : defaultThemeId;
 
 			document.documentElement.setAttribute('data-theme', resolvedTheme);
 		} catch {

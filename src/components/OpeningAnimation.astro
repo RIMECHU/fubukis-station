@@ -158,14 +158,26 @@
 
     <!-- ═══════════ CONTENT OVERLAY ═══════════ -->
     <div id="intro-content" class="absolute inset-0 z-30 flex flex-col items-center justify-center">
+        <div class="logo-overline" id="logo-overline">夜乃くろむ</div>
         <div class="logo-line">
-            <span class="logo-prompt" aria-hidden="true">$</span>
             <h1 id="logo-text" data-value="kuromu" aria-label="kuromu"></h1>
             <span class="logo-cursor" aria-hidden="true"></span>
+            <span class="logo-skull" id="logo-skull" aria-hidden="true">
+                <svg viewBox="-19 -18 38 37" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M0,-16 C-11,-16 -17,-9 -17,0 C-17,6 -14,10 -10,12 L-10,17 L-5,17 L-5,13 L0,13 L0,17 L5,17 L5,13 L10,13 L10,17 L10,12 C14,10 17,6 17,0 C17,-9 11,-16 0,-16 Z" fill="#e8eef8"/>
+                    <circle cx="-6" cy="0" r="4" fill="#0a0e1a"/>
+                    <circle cx="6" cy="0" r="4" fill="#0a0e1a"/>
+                    <circle cx="-7.3" cy="-1.4" r="1.3" fill="#ffffff"/>
+                    <circle cx="4.7" cy="-1.4" r="1.3" fill="#ffffff"/>
+                    <path d="M0,5.5 L-1.6,9 L1.6,9 Z" fill="#0a0e1a" opacity="0.7"/>
+                    <ellipse cx="-10.5" cy="6.5" rx="2.6" ry="1.5" fill="#c9a0dc" opacity="0.6"/>
+                    <ellipse cx="10.5" cy="6.5" rx="2.6" ry="1.5" fill="#c9a0dc" opacity="0.6"/>
+                </svg>
+            </span>
         </div>
         <div id="logo-underline"></div>
         <div class="mt-6 overflow-hidden">
-            <span id="sub-text">夜乃くろむ</span>
+            <span id="sub-text">夜の帳</span>
         </div>
     </div>
 
@@ -193,8 +205,6 @@
 
 <!-- ═══════════ MAIN ANIMATION SCRIPT ═══════════ -->
 <script>
-    const LETTERS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%&';
-
     // Cute round skull (💀 motif), pointing up
     const SKULL_HEAD = 'M0,-16 C-11,-16 -17,-9 -17,0 C-17,6 -14,10 -10,12 L-10,17 L-5,17 L-5,13 L0,13 L0,17 L5,17 L5,13 L10,13 L10,17 L10,12 C14,10 17,6 17,0 C17,-9 11,-16 0,-16 Z';
 
@@ -395,7 +405,7 @@
         for (let i = 0; i < FG_COUNT; i++) spawnWisp(true);
         for (let i = 0; i < SKULL_COUNT; i++) spawnSkull();
 
-        // ── Logo: terminal typewriter reveal ──
+        // ── Logo: souls materialize letter by letter ──
         const finalText = logoText.dataset.value || 'kuromu';
         const letterEls: HTMLElement[] = [];
         logoText.innerHTML = '';
@@ -407,30 +417,26 @@
             letterEls.push(s);
         });
 
-        const TYPE_BASE = reduced ? 120 : 500;
-        const TYPE_GAP = reduced ? 45 : 115;
+        const overline = document.getElementById('logo-overline');
+        const skullBadge = document.getElementById('logo-skull');
+        const cursorEl = content.querySelector('.logo-cursor');
+
+        const TYPE_BASE = reduced ? 120 : 560;
+        const TYPE_GAP = reduced ? 45 : 130;
         letterEls.forEach((s, i) => {
-            const final = finalText[i];
             const appearAt = TYPE_BASE + i * TYPE_GAP;
-            setTimeout(() => {
-                s.classList.add('on');
-                if (!reduced) {
-                    // brief scramble flicker before the character lands
-                    let frame = 0;
-                    const flick = () => {
-                        frame++;
-                        if (frame < 3) {
-                            s.textContent = LETTERS[Math.floor(Math.random() * LETTERS.length)].toLowerCase();
-                            setTimeout(flick, 42);
-                        } else {
-                            s.textContent = final;
-                        }
-                    };
-                    flick();
-                }
-            }, appearAt);
+            setTimeout(() => s.classList.add('on'), appearAt);
         });
         const typedDone = TYPE_BASE + finalText.length * TYPE_GAP;
+
+        // Overline「夜乃くろむ」drifts in first
+        setTimeout(() => { if (overline) overline.classList.add('on'); }, reduced ? 60 : 260);
+
+        // After the word is whole: cursor fades, little skull hops in
+        setTimeout(() => {
+            if (cursorEl) cursorEl.classList.add('off');
+            if (skullBadge) skullBadge.classList.add('on');
+        }, typedDone + (reduced ? 60 : 220));
 
         // ── Animation Loop ──
         let startTs: number | null = null;
@@ -544,55 +550,125 @@
 
 <!-- ═══════════ STYLES ═══════════ -->
 <style>
-    /* ── Terminal wordmark ── */
+    /* ── Soul wordmark (Yano Kuromu style) ── */
+    .logo-overline {
+        font-family: var(--font-mono, monospace);
+        font-size: clamp(0.7rem, 1.8vw, 0.95rem);
+        color: #909ec8;
+        letter-spacing: 0.3em;
+        padding-left: 0.3em;
+        margin-bottom: 0.9rem;
+        opacity: 0;
+        transform: translateY(10px);
+        filter: blur(5px);
+        transition:
+            opacity 0.9s ease,
+            transform 0.9s cubic-bezier(0.2, 0.8, 0.2, 1),
+            filter 0.9s ease,
+            letter-spacing 1.5s cubic-bezier(0.2, 0.8, 0.2, 1) 0.1s;
+    }
+
+    .logo-overline.on {
+        opacity: 1;
+        transform: translateY(0);
+        filter: blur(0);
+        letter-spacing: 0.85em;
+        padding-left: 0.85em;
+    }
+
     .logo-line {
         display: flex;
         align-items: baseline;
-        gap: 0.55rem;
-        font-family: var(--font-mono, monospace);
-        font-size: clamp(2.1rem, 7.5vw, 5.2rem);
-        font-weight: 700;
-        line-height: 1.1;
-    }
-
-    .logo-prompt {
-        color: #909ec8;
-        font-weight: 700;
-        text-shadow: 0 0 24px rgba(144, 158, 200, 0.45);
+        gap: 0.18em;
+        font-family: var(--font-sans, sans-serif);
+        font-size: clamp(2.6rem, 9vw, 6rem);
+        font-weight: 800;
+        line-height: 1.05;
     }
 
     #logo-text {
         margin: 0;
         display: flex;
-        letter-spacing: 0.04em;
+        letter-spacing: 0.03em;
         color: var(--color-foreground);
-        text-shadow: 0 0 32px rgba(144, 158, 200, 0.25);
     }
 
+    /* Each letter condenses out of soul-mist */
     .logo-letter {
         display: inline-block;
         opacity: 0;
+        transform: translateY(0.38em) scale(1.06);
+        filter: blur(12px);
+        transition:
+            opacity 0.6s ease,
+            transform 0.85s cubic-bezier(0.19, 1, 0.22, 1),
+            filter 0.7s ease;
     }
 
     .logo-letter.on {
         opacity: 1;
+        transform: translateY(0) scale(1);
+        filter: blur(0);
+        animation: soulGlow 1.3s ease-out both;
     }
 
-    /* Blinking block cursor */
+    @keyframes soulGlow {
+        0%   { text-shadow: 0 0 0 rgba(144, 158, 200, 0); }
+        35%  { text-shadow: 0 0 34px rgba(144, 158, 200, 0.9); }
+        100% { text-shadow: 0 0 22px rgba(144, 158, 200, 0.28); }
+    }
+
+    /* Cursor keeps blinking while the soul types, then retires */
     .logo-cursor {
         display: inline-block;
-        width: 0.42em;
-        height: 0.95em;
-        margin-left: 0.08em;
+        width: 0.38em;
+        height: 0.82em;
+        margin-left: 0.06em;
         background: #909ec8;
         box-shadow: 0 0 18px rgba(144, 158, 200, 0.6);
-        transform: translateY(0.12em);
+        transform: translateY(0.1em);
         animation: cursorBlink 1.05s step-end infinite;
+        transition: opacity 0.35s ease;
+    }
+
+    .logo-cursor.off {
+        opacity: 0;
+        animation: none;
     }
 
     @keyframes cursorBlink {
         0%, 55%  { opacity: 1; }
         56%, 100% { opacity: 0; }
+    }
+
+    /* Little skull hops in and keeps bobbing */
+    .logo-skull {
+        display: inline-flex;
+        width: 0.72em;
+        margin-left: 0.14em;
+        align-self: center;
+        opacity: 0;
+        transform: translateY(-0.5em) scale(0.3) rotate(-18deg);
+        filter: drop-shadow(0 0 14px rgba(144, 158, 200, 0.55));
+    }
+
+    .logo-skull.on {
+        opacity: 1;
+        transform: translateY(0) scale(1) rotate(0deg);
+        transition:
+            opacity 0.3s ease,
+            transform 0.65s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .logo-skull svg {
+        width: 100%;
+        height: auto;
+        animation: skullBob 2.8s ease-in-out 0.8s infinite;
+    }
+
+    @keyframes skullBob {
+        0%, 100% { transform: translateY(0) rotate(-4deg); }
+        50%      { transform: translateY(-9%) rotate(4deg); }
     }
 
     /* Underline */
@@ -741,7 +817,8 @@
         #graveyard,
         .star,
         .chain,
-        .logo-cursor {
+        .logo-cursor,
+        .logo-skull svg {
             animation: none;
         }
     }

@@ -36,20 +36,20 @@ export interface Theme {
 const spectreTheme: Theme = {
 	id: 'spectre',
 	name: 'Spectre',
-	description: 'Purple dark theme inspired by Spectre',
+	description: 'Dusty blue dark theme (Kuromu #909ec8)',
 	tone: 'dark',
 	colors: {
 		background: '#0a0a0a',
 		foreground: '#ffffff',
 		foregroundSecondary: '#c7c7c7',
-		primary: '#8c5cf5',
-		primaryLight: '#a277ff',
-		primaryLightest: '#c2a8fd',
-		primaryRgb: '140, 92, 245',
+		primary: '#909ec8',
+		primaryLight: '#aab8dd',
+		primaryLightest: '#c9d4ee',
+		primaryRgb: '144, 158, 200',
 		border: '#353535',
 		separator: '#353535',
-		accent: '#8c5cf5',
-		link: '#a277ff',
+		accent: '#909ec8',
+		link: '#aab8dd',
 	},
 };
 
