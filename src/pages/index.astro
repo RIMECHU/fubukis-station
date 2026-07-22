@@ -37,7 +37,7 @@ const t = useTranslations(lang);
     description={SITE_DESCRIPTION}
     lang={lang}
     showFooter
-    class="w-full max-w-[1280px] mx-auto py-8"
+    class="w-full max-w-[1280px] mx-auto home-page"
 >
     <OpeningAnimation slot="overlay" />
     <!-- <KuromuMascot slot="overlay" /> -->
@@ -271,9 +271,12 @@ const t = useTranslations(lang);
 
 <style>
     /* Kuromu night palette accents (homepage) */
+    .home-page {
+        padding: 1.15rem 0 2.5rem;
+    }
     .layout {
         display: grid;
-        gap: 1.5rem;
+        gap: 1.35rem;
         padding: 0 1.15rem;
         position: relative;
         z-index: 1;

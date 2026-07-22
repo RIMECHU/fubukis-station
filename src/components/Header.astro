@@ -40,9 +40,8 @@ const items = [
 	data-open="false"
 	data-scroll-direction="up"
 >
-	<div class="nav-container max-w-[1280px] mx-auto px-4 py-4 flex items-center justify-between">
+	<div class="nav-container max-w-[1280px] mx-auto px-4 flex items-center justify-between">
 		<a class="brand font-extrabold text-xl no-underline" href={localized('/')} aria-label={SITE_TITLE}>
-				<span class="brand-prompt" aria-hidden="true">$</span>
 				<span class="brand-name">{t('common.brand')}</span>
 				<span class="brand-skull" aria-hidden="true">
 					<svg viewBox="-19 -18 38 37" xmlns="http://www.w3.org/2000/svg">
@@ -131,20 +130,13 @@ const items = [
 		--nav-lilac: #c9a0dc;
 		--nav-bone: #e8eef8;
 		--nav-ink: #0a0e1a;
-		border-bottom: 1px solid color-mix(in srgb, var(--nav-mist) 28%, transparent);
-		background:
-			linear-gradient(
-				180deg,
-				color-mix(in srgb, var(--nav-mist) 14%, transparent) 0%,
-				color-mix(in srgb, var(--nav-lilac) 8%, transparent) 42%,
-				color-mix(in srgb, var(--nav-ink) 72%, transparent) 100%
-			),
-			color-mix(in srgb, var(--color-background) 78%, transparent);
-		backdrop-filter: blur(16px) saturate(1.25);
-		-webkit-backdrop-filter: blur(16px) saturate(1.25);
-		box-shadow:
-			0 8px 28px color-mix(in srgb, var(--nav-ink) 35%, transparent),
-			inset 0 1px 0 color-mix(in srgb, var(--nav-bone) 10%, transparent);
+		border-bottom: none;
+		background: transparent;
+		backdrop-filter: none;
+		-webkit-backdrop-filter: none;
+		box-shadow: none;
+		overflow: visible;
+		padding: 0.65rem 0.85rem 0;
 	}
 
 	.header-nav[data-scroll-direction="down"] {
@@ -192,20 +184,6 @@ const items = [
 		align-items: center;
 		gap: 0.4rem;
 		color: var(--color-foreground) !important;
-	}
-
-	.brand-prompt {
-		font-family: var(--font-mono, monospace);
-		font-weight: 700;
-		color: var(--color-primary);
-		text-shadow: 0 0 10px color-mix(in srgb, var(--color-primary) 45%, transparent);
-		transition: text-shadow 0.5s cubic-bezier(0.22, 1, 0.36, 1);
-	}
-
-	.brand:hover .brand-prompt {
-		text-shadow:
-			0 0 12px color-mix(in srgb, var(--color-primary) 55%, transparent),
-			0 0 22px color-mix(in srgb, #c9a0dc 28%, transparent);
 	}
 
 	.brand-name {
@@ -329,38 +307,85 @@ const items = [
 			drop-shadow(0 0 14px color-mix(in srgb, #c9a0dc 35%, transparent));
 	}
 
-	/* Horizon glow — mist → lilac veil under navbar */
+	/* Ambient top veil — soft dissolve behind the floating bar */
 	.header-nav::before {
-		content: '';
-		position: absolute;
-		inset: 0;
-		pointer-events: none;
-		background:
-			radial-gradient(ellipse 55% 120% at 12% 0%, color-mix(in srgb, var(--nav-mist) 18%, transparent), transparent 70%),
-			radial-gradient(ellipse 45% 100% at 88% 0%, color-mix(in srgb, var(--nav-lilac) 14%, transparent), transparent 68%);
-		opacity: 0.9;
-	}
-
-	.header-nav::after {
 		content: '';
 		position: absolute;
 		left: 0;
 		right: 0;
-		bottom: -1px;
-		height: 2px;
-		background: linear-gradient(90deg,
-			transparent 0%,
-			color-mix(in srgb, var(--nav-mist) 55%, transparent) 22%,
-			color-mix(in srgb, var(--nav-lilac) 70%, transparent) 50%,
-			color-mix(in srgb, var(--nav-mist) 55%, transparent) 78%,
-			transparent 100%);
-		box-shadow: 0 0 16px color-mix(in srgb, var(--nav-lilac) 35%, transparent);
+		top: 0;
+		height: calc(100% + 40px);
 		pointer-events: none;
+		z-index: 0;
+		background: linear-gradient(
+			180deg,
+			color-mix(in srgb, var(--nav-ink) 28%, transparent) 0%,
+			color-mix(in srgb, var(--nav-mist) 6%, transparent) 45%,
+			transparent 100%
+		);
+		-webkit-mask-image: linear-gradient(180deg, #000 0%, #000 50%, transparent 100%);
+		mask-image: linear-gradient(180deg, #000 0%, #000 50%, transparent 100%);
+	}
+
+	/* Soft contact shadow under the floating bar */
+	.header-nav::after {
+		content: '';
+		position: absolute;
+		left: 8%;
+		right: 8%;
+		top: calc(100% - 6px);
+		height: 36px;
+		pointer-events: none;
+		z-index: 0;
+		background: radial-gradient(
+			ellipse 70% 80% at 50% 0%,
+			color-mix(in srgb, var(--nav-ink) 55%, transparent),
+			color-mix(in srgb, var(--nav-mist) 12%, transparent) 45%,
+			transparent 72%
+		);
+		filter: blur(8px);
+		opacity: 0.85;
 	}
 
 	.nav-container {
 		position: relative;
 		z-index: 1;
+		padding-top: 0.7rem;
+		padding-bottom: 0.7rem;
+		border-radius: 18px;
+		border: 1px solid color-mix(in srgb, var(--nav-mist) 38%, transparent);
+		background:
+			linear-gradient(
+				165deg,
+				color-mix(in srgb, var(--nav-bone) 10%, transparent) 0%,
+				color-mix(in srgb, var(--nav-mist) 14%, transparent) 28%,
+				color-mix(in srgb, var(--nav-lilac) 10%, transparent) 58%,
+				color-mix(in srgb, var(--nav-ink) 58%, transparent) 100%
+			);
+		backdrop-filter: blur(18px) saturate(1.2);
+		-webkit-backdrop-filter: blur(18px) saturate(1.2);
+		box-shadow:
+			/* top rim light */
+			inset 0 1px 0 color-mix(in srgb, var(--nav-bone) 28%, transparent),
+			/* inner depth */
+			inset 0 -1px 0 color-mix(in srgb, var(--nav-ink) 45%, transparent),
+			inset 0 0 0 1px color-mix(in srgb, var(--nav-lilac) 8%, transparent),
+			/* lift + glow */
+			0 1px 2px color-mix(in srgb, var(--nav-ink) 40%, transparent),
+			0 8px 24px color-mix(in srgb, var(--nav-ink) 42%, transparent),
+			0 16px 40px color-mix(in srgb, var(--nav-mist) 14%, transparent),
+			0 0 28px color-mix(in srgb, var(--nav-lilac) 10%, transparent);
+	}
+
+	@media (max-width: 639px) {
+		.header-nav {
+			padding: 0.45rem 0.55rem 0;
+		}
+		.nav-container {
+			border-radius: 14px;
+			padding-top: 0.6rem;
+			padding-bottom: 0.6rem;
+		}
 	}
 
 	@media (prefers-reduced-motion: reduce) {
@@ -576,9 +601,15 @@ const items = [
 		z-index: 60;
 	}
 
-	/* Add padding to body to prevent content from being hidden under fixed nav */
+	/* Clear floating glass nav + soft shadow under it */
 	:global(body) {
-		padding-top: 4rem;
+		--nav-offset: 5.75rem;
+		padding-top: var(--nav-offset);
+	}
+	@media (max-width: 639px) {
+		:global(body) {
+			--nav-offset: 5.35rem;
+		}
 	}
 </style>
 
