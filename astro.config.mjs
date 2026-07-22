@@ -29,7 +29,7 @@ const languageAliases = {
 export default defineConfig({
   devToolbar: { enabled: false },
   output: 'static',
-  site: 'https://fubuki.gal',
+  site: 'https://fubuki.asia',
   i18n: {
     defaultLocale: 'en',
     locales: ['en', 'zh'],

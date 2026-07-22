@@ -36,7 +36,8 @@ export const SHARE_CONFIG = {
 	maxImageBytes: 0,
 
 	allowedDomains: [
-		'nova.gal',
+		'fubuki.asia',
+		'www.fubuki.asia',
 		'localhost',
 	],
 } as const;

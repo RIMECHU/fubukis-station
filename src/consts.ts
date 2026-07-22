@@ -6,4 +6,4 @@ export const SITE_DESCRIPTION = 'Be yourself';
 export const USER_NAME = 'Kuromu';
 export const AVATAR_URL = '/TK.jpg';
 
-export const SITE_URL = '';
+export const SITE_URL = 'https://fubuki.asia';
