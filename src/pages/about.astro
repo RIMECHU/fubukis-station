@@ -148,13 +148,18 @@ const d = content[lang] ?? content[defaultLang];
     }
     .name {
         margin: 1rem 0 0.25rem;
-        font-size: 1.75rem;
-        font-weight: 800;
+        font-size: 1.9rem;
+        font-weight: 700;
+        font-family: var(--font-display);
+        letter-spacing: 0.04em;
         color: var(--color-foreground);
+        filter: drop-shadow(0 0 12px color-mix(in srgb, var(--color-primary) 40%, transparent));
     }
     .tagline {
         margin: 0;
         font-size: 1rem;
+        font-family: var(--font-display);
+        letter-spacing: 0.06em;
         color: color-mix(in srgb, var(--color-foreground) 55%, transparent);
     }
 
@@ -225,14 +230,15 @@ const d = content[lang] ?? content[defaultLang];
         background: color-mix(in srgb, var(--color-foreground) 2%, transparent);
         margin-bottom: 1rem;
     }
-    .card h2 {
-        margin: 0 0 0.75rem;
-        font-size: 1rem;
-        font-weight: 600;
-        color: color-mix(in srgb, var(--color-foreground) 75%, transparent);
-        text-transform: uppercase;
-        letter-spacing: 0.05em;
-    }
+	.card h2 {
+		margin: 0 0 0.75rem;
+		font-size: 1.05rem;
+		font-weight: 700;
+		font-family: var(--font-display);
+		color: color-mix(in srgb, var(--color-foreground) 75%, transparent);
+		letter-spacing: 0.06em;
+		text-transform: none;
+	}
 
     .grid-2 {
         display: grid;

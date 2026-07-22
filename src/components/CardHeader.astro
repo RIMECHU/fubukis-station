@@ -32,13 +32,16 @@ const icons = {
 			style="filter: drop-shadow(0 0 4px var(--color-accent))"
 		/>
 	)}
-		<h2 class="text-lg font-semibold text-accent m-0">{title}</h2>
+		<h2 class="card-title font-display text-lg font-bold text-accent m-0">{title}</h2>
 	{href && linkText && (
 		<a href={href} class="card-header-link">{linkText} →</a>
 	)}
 </div>
 
 <style>
+	.card-title {
+		letter-spacing: 0.04em;
+	}
 	.card-header-link {
 		margin-left: auto;
 		font-size: 0.75rem;

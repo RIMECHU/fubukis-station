@@ -158,10 +158,47 @@
 
     <!-- ═══════════ CONTENT OVERLAY ═══════════ -->
     <div id="intro-content" class="absolute inset-0 z-30 flex flex-col items-center justify-center">
-        <div class="logo-overline" id="logo-overline">夜乃くろむ</div>
+        <div class="logo-overline" id="logo-overline">夜乃くろむ · ほねほね</div>
         <div class="logo-line">
-            <h1 id="logo-text" data-value="Kuromu" aria-label="Kuromu"></h1>
+            <span class="logo-flourish logo-flourish-l" id="logo-flourish-l" aria-hidden="true">
+                <!-- filled crossed bones -->
+                <svg viewBox="0 0 64 48" xmlns="http://www.w3.org/2000/svg">
+                    <g transform="rotate(-38 32 24)">
+                        <rect x="6" y="20" width="52" height="8" rx="4" fill="#e8eef8"/>
+                        <circle cx="8" cy="24" r="6" fill="#e8eef8"/>
+                        <circle cx="56" cy="24" r="6" fill="#e8eef8"/>
+                        <circle cx="6" cy="21.5" r="2" fill="#c9a0dc" opacity="0.55"/>
+                        <circle cx="58" cy="21.5" r="2" fill="#c9a0dc" opacity="0.55"/>
+                    </g>
+                    <g transform="rotate(38 32 24)">
+                        <rect x="6" y="20" width="52" height="8" rx="4" fill="#c3cfec"/>
+                        <circle cx="8" cy="24" r="6" fill="#c3cfec"/>
+                        <circle cx="56" cy="24" r="6" fill="#c3cfec"/>
+                        <circle cx="6" cy="21.5" r="2" fill="#909ec8" opacity="0.7"/>
+                        <circle cx="58" cy="21.5" r="2" fill="#909ec8" opacity="0.7"/>
+                    </g>
+                </svg>
+            </span>
+            <h1 id="logo-text" class="kuromu-wordmark" data-value="Kuromu" aria-label="Kuromu"></h1>
             <span class="logo-cursor" aria-hidden="true"></span>
+            <span class="logo-flourish logo-flourish-r" id="logo-flourish-r" aria-hidden="true">
+                <svg viewBox="0 0 64 48" xmlns="http://www.w3.org/2000/svg">
+                    <g transform="rotate(-38 32 24)">
+                        <rect x="6" y="20" width="52" height="8" rx="4" fill="#e8eef8"/>
+                        <circle cx="8" cy="24" r="6" fill="#e8eef8"/>
+                        <circle cx="56" cy="24" r="6" fill="#e8eef8"/>
+                        <circle cx="6" cy="21.5" r="2" fill="#c9a0dc" opacity="0.55"/>
+                        <circle cx="58" cy="21.5" r="2" fill="#c9a0dc" opacity="0.55"/>
+                    </g>
+                    <g transform="rotate(38 32 24)">
+                        <rect x="6" y="20" width="52" height="8" rx="4" fill="#c3cfec"/>
+                        <circle cx="8" cy="24" r="6" fill="#c3cfec"/>
+                        <circle cx="56" cy="24" r="6" fill="#c3cfec"/>
+                        <circle cx="6" cy="21.5" r="2" fill="#909ec8" opacity="0.7"/>
+                        <circle cx="58" cy="21.5" r="2" fill="#909ec8" opacity="0.7"/>
+                    </g>
+                </svg>
+            </span>
             <span class="logo-skull" id="logo-skull" aria-hidden="true">
                 <svg viewBox="-19 -18 38 37" xmlns="http://www.w3.org/2000/svg">
                     <path d="M0,-16 C-11,-16 -17,-9 -17,0 C-17,6 -14,10 -10,12 L-10,17 L-5,17 L-5,13 L0,13 L0,17 L5,17 L5,13 L10,13 L10,17 L10,12 C14,10 17,6 17,0 C17,-9 11,-16 0,-16 Z" fill="#e8eef8"/>
@@ -405,13 +442,16 @@
         for (let i = 0; i < FG_COUNT; i++) spawnWisp(true);
         for (let i = 0; i < SKULL_COUNT; i++) spawnSkull();
 
-        // ── Logo: souls materialize letter by letter ──
+        // ── Logo: ghostly materialize letter by letter ──
         const finalText = logoText.dataset.value || 'Kuromu';
         const letterEls: HTMLElement[] = [];
         logoText.innerHTML = '';
-        finalText.split('').forEach((ch) => {
+        finalText.split('').forEach((ch, i) => {
             const s = document.createElement('span');
-            s.className = 'logo-letter';
+            s.className = 'logo-letter' + (i === 0 ? ' is-cap' : '');
+            s.style.setProperty('--i', String(i));
+            // Inline fallback — Astro scoped CSS won't hit JS-created nodes
+            s.style.opacity = '0';
             s.textContent = ch;
             logoText.appendChild(s);
             letterEls.push(s);
@@ -420,17 +460,27 @@
         const overline = document.getElementById('logo-overline');
         const skullBadge = document.getElementById('logo-skull');
         const cursorEl = content.querySelector('.logo-cursor');
+        const flourishL = document.getElementById('logo-flourish-l');
+        const flourishR = document.getElementById('logo-flourish-r');
 
-        const TYPE_BASE = reduced ? 120 : 560;
-        const TYPE_GAP = reduced ? 45 : 130;
+        // Slow ghost drift-in (not a fast typewriter snap)
+        const TYPE_BASE = reduced ? 160 : 900;
+        const TYPE_GAP = reduced ? 70 : 320;
         letterEls.forEach((s, i) => {
             const appearAt = TYPE_BASE + i * TYPE_GAP;
-            setTimeout(() => s.classList.add('on'), appearAt);
+            setTimeout(() => {
+                s.style.opacity = '';
+                s.classList.add('on');
+            }, appearAt);
         });
         const typedDone = TYPE_BASE + finalText.length * TYPE_GAP;
 
-        // Overline「夜乃くろむ」drifts in first
-        setTimeout(() => { if (overline) overline.classList.add('on'); }, reduced ? 60 : 260);
+        // Overline + crossed bones come in early (don't wait for typing)
+        setTimeout(() => {
+            if (overline) overline.classList.add('on');
+            if (flourishL) flourishL.classList.add('on');
+            if (flourishR) flourishR.classList.add('on');
+        }, reduced ? 60 : 220);
 
         // After the word is whole: cursor fades, little skull hops in
         setTimeout(() => {
@@ -440,8 +490,9 @@
 
         // ── Animation Loop ──
         let startTs: number | null = null;
-        const RUSH_START = reduced ? 1400 : 3200;
-        const TOTAL_DUR = reduced ? 2200 : 4700;
+        // Give the ghost wordmark time to fully materialize before the rush
+        const RUSH_START = reduced ? 1600 : 4800;
+        const TOTAL_DUR = reduced ? 2600 : 6400;
 
         const loop = (ts: number) => {
             if (!startTs) startTs = ts;
@@ -550,17 +601,18 @@
 
 <!-- ═══════════ STYLES ═══════════ -->
 <style>
-    /* ── Soul wordmark (Yano Kuromu style) ── */
+    /* ── Soul wordmark (Yano Kuromu · ほねほね night gothic) ── */
     .logo-overline {
         font-family: var(--font-mono, monospace);
-        font-size: clamp(0.7rem, 1.8vw, 0.95rem);
-        color: #909ec8;
-        letter-spacing: 0.3em;
-        padding-left: 0.3em;
-        margin-bottom: 0.9rem;
+        font-size: clamp(0.68rem, 1.7vw, 0.9rem);
+        color: #aab8dd;
+        letter-spacing: 0.28em;
+        padding-left: 0.28em;
+        margin-bottom: 0.75rem;
         opacity: 0;
         transform: translateY(10px);
         filter: blur(5px);
+        text-shadow: 0 0 16px rgba(144, 158, 200, 0.35);
         transition:
             opacity 0.9s ease,
             transform 0.9s cubic-bezier(0.2, 0.8, 0.2, 1),
@@ -572,61 +624,158 @@
         opacity: 1;
         transform: translateY(0);
         filter: blur(0);
-        letter-spacing: 0.85em;
-        padding-left: 0.85em;
+        letter-spacing: 0.72em;
+        padding-left: 0.72em;
     }
 
     .logo-line {
         display: flex;
-        align-items: baseline;
-        gap: 0.18em;
-        font-family: var(--font-sans, sans-serif);
+        align-items: center;
+        gap: 0.22em;
         font-size: clamp(2.6rem, 9vw, 6rem);
-        font-weight: 800;
         line-height: 1.05;
     }
 
-    #logo-text {
+    /* Crossed-bone flourishes (ほねほね motif) — solid bones, hard to miss */
+    .logo-flourish {
+        display: inline-flex;
+        flex-shrink: 0;
+        width: clamp(2.6rem, 7.5vw, 4.2rem);
+        opacity: 0;
+        transform: scale(0.35);
+        filter: drop-shadow(0 0 12px rgba(144, 158, 200, 0.75))
+            drop-shadow(0 0 22px rgba(232, 238, 248, 0.35));
+        transition:
+            opacity 0.5s ease,
+            transform 0.75s cubic-bezier(0.34, 1.45, 0.64, 1);
+    }
+
+    .logo-flourish.on {
+        opacity: 1;
+        transform: scale(1);
+    }
+
+    .logo-flourish-l { transform: scale(0.35) rotate(-14deg); margin-right: 0.15em; }
+    .logo-flourish-r { transform: scale(0.35) rotate(14deg); margin-left: 0.1em; }
+    .logo-flourish-l.on { transform: scale(1) rotate(-10deg); }
+    .logo-flourish-r.on { transform: scale(1) rotate(10deg); }
+
+    .logo-flourish svg {
+        width: 100%;
+        height: auto;
+        overflow: visible;
+    }
+
+    /* Kuromu artistic wordmark — soft gothic bone lettering */
+    #logo-text.kuromu-wordmark {
         margin: 0;
         display: flex;
-        letter-spacing: 0.03em;
-        color: var(--color-foreground);
+        align-items: baseline;
+        letter-spacing: 0.04em;
+        font-family: var(--font-display);
+        font-weight: 700;
+        font-style: normal;
+        font-size: 1.08em;
+        line-height: 1;
     }
 
-    /* Each letter condenses out of soul-mist */
-    .logo-letter {
+    /* Each letter — ghost mist → solid (GLOBAL: spans are created in JS) */
+    :global(.logo-letter) {
+        --i: 0;
         display: inline-block;
         opacity: 0;
-        transform: translateY(0.38em) scale(1.06);
-        filter: blur(12px);
+        transform: translateY(0.55em) scale(1.12) rotate(calc((var(--i) - 2.5) * 2.4deg));
+        /* mist-blue → bone art fill */
+        color: transparent;
+        background-image: linear-gradient(
+            185deg,
+            #ffffff 8%,
+            #dfe6f5 32%,
+            #909ec8 68%,
+            #6b7aa8 100%
+        );
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+        filter: blur(18px) drop-shadow(0 0 14px rgba(144, 158, 200, 0.35));
         transition:
-            opacity 0.6s ease,
-            transform 0.85s cubic-bezier(0.19, 1, 0.22, 1),
-            filter 0.7s ease;
+            opacity 1.35s ease,
+            transform 1.55s cubic-bezier(0.19, 1, 0.22, 1),
+            filter 1.4s ease;
     }
 
-    .logo-letter.on {
+    :global(.logo-letter.on) {
         opacity: 1;
-        transform: translateY(0) scale(1);
-        filter: blur(0);
-        animation: soulGlow 1.3s ease-out both;
+        transform: translateY(0) scale(1) rotate(calc((var(--i) - 2.5) * 1.15deg));
+        filter: blur(0) drop-shadow(0 0 12px rgba(144, 158, 200, 0.7))
+            drop-shadow(0 0 26px rgba(144, 158, 200, 0.35))
+            drop-shadow(0 3px 0 rgba(8, 10, 18, 0.35));
+        animation: soulGlow 1.8s ease-out both;
+    }
+
+    /* Leading K — taller gothic drop-cap */
+    :global(.logo-letter.is-cap) {
+        font-size: 1.22em;
+        margin-right: 0.04em;
+        background-image: linear-gradient(
+            185deg,
+            #ffffff 0%,
+            #e8eef8 28%,
+            #aab8dd 58%,
+            #909ec8 82%,
+            #c9a0dc 100%
+        );
+        -webkit-background-clip: text;
+        background-clip: text;
+    }
+
+    :global(.logo-letter.is-cap.on) {
+        transform: translateY(0.04em) scale(1) rotate(-4deg);
+        filter: blur(0) drop-shadow(0 0 16px rgba(144, 158, 200, 0.85))
+            drop-shadow(0 0 28px rgba(201, 160, 220, 0.4))
+            drop-shadow(0 4px 0 rgba(8, 10, 18, 0.4));
+    }
+
+    /* Soft lilac wash on middle letters */
+    :global(.logo-letter:nth-child(2)),
+    :global(.logo-letter:nth-child(4)),
+    :global(.logo-letter:nth-child(6)) {
+        background-image: linear-gradient(
+            185deg,
+            #f2f5fb 10%,
+            #c9d4ec 45%,
+            #909ec8 78%,
+            #b8a0c8 100%
+        );
+        -webkit-background-clip: text;
+        background-clip: text;
     }
 
     @keyframes soulGlow {
-        0%   { text-shadow: 0 0 0 rgba(144, 158, 200, 0); }
-        35%  { text-shadow: 0 0 34px rgba(144, 158, 200, 0.9); }
-        100% { text-shadow: 0 0 22px rgba(144, 158, 200, 0.28); }
+        0%   {
+            filter: blur(0) drop-shadow(0 0 0 rgba(144, 158, 200, 0));
+        }
+        40%  {
+            filter: blur(0) drop-shadow(0 0 28px rgba(144, 158, 200, 0.95))
+                drop-shadow(0 0 16px rgba(201, 160, 220, 0.55));
+        }
+        100% {
+            filter: blur(0) drop-shadow(0 0 12px rgba(144, 158, 200, 0.65))
+                drop-shadow(0 0 22px rgba(144, 158, 200, 0.3))
+                drop-shadow(0 3px 0 rgba(8, 10, 18, 0.35));
+        }
     }
 
     /* Cursor keeps blinking while the soul types, then retires */
     .logo-cursor {
         display: inline-block;
-        width: 0.38em;
-        height: 0.82em;
-        margin-left: 0.06em;
-        background: #909ec8;
-        box-shadow: 0 0 18px rgba(144, 158, 200, 0.6);
-        transform: translateY(0.1em);
+        width: 0.34em;
+        height: 0.78em;
+        margin-left: 0.04em;
+        background: linear-gradient(180deg, #c3cfec 0%, #909ec8 100%);
+        box-shadow: 0 0 18px rgba(144, 158, 200, 0.65);
+        border-radius: 1px;
+        transform: translateY(0.08em);
         animation: cursorBlink 1.05s step-end infinite;
         transition: opacity 0.35s ease;
     }
@@ -645,7 +794,7 @@
     .logo-skull {
         display: inline-flex;
         width: 0.72em;
-        margin-left: 0.14em;
+        margin-left: 0.06em;
         align-self: center;
         opacity: 0;
         transform: translateY(-0.5em) scale(0.3) rotate(-18deg);
@@ -671,20 +820,24 @@
         50%      { transform: translateY(-9%) rotate(4deg); }
     }
 
-    /* Underline */
+    /* Underline — night mist ribbon */
     #logo-underline {
-        margin-top: 1.1rem;
+        margin-top: 1.05rem;
         height: 2px;
-        width: min(46vw, 420px);
+        width: min(52vw, 460px);
         transform: scaleX(0);
         transform-origin: center;
         background: linear-gradient(90deg,
             transparent 0%,
+            #aab8dd 22%,
             #909ec8 50%,
+            #c9a0dc 78%,
             transparent 100%);
-        box-shadow: 0 0 14px rgba(144, 158, 200, 0.65);
+        box-shadow:
+            0 0 14px rgba(144, 158, 200, 0.65),
+            0 0 28px rgba(201, 160, 220, 0.2);
         transition: transform 1.1s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 0.8s ease;
-        opacity: 0.9;
+        opacity: 0.95;
     }
 
     #logo-underline.on {
@@ -820,6 +973,12 @@
         .logo-cursor,
         .logo-skull svg {
             animation: none;
+        }
+    }
+
+    @media (max-width: 360px) {
+        .logo-flourish {
+            width: clamp(2rem, 12vw, 2.8rem);
         }
     }
 </style>

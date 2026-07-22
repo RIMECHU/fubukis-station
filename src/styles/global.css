@@ -39,8 +39,13 @@
 	--color-accent: var(--theme-accent);
 	--color-link: var(--theme-link);
 	
-	/* Font families - Tailwind v4 syntax */
+	/* Font families - Tailwind v4 syntax
+	   display = Kuromu gothic titles / chrome
+	   sans    = readable body
+	   mono    = terminal / code
+	*/
 	--font-sans: "Space Grotesk", Geist, ui-sans-serif, system-ui, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Noto Sans CJK SC", sans-serif;
+	--font-display: "Grenze Gotisch", "Cinzel Decorative", Georgia, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Noto Serif CJK SC", serif;
 	--font-mono: "JetBrains Mono", GeistMono, ui-monospace, 'SFMono-Regular', Monaco, 'Cascadia Code', 'Segoe UI Mono', 'Courier New', monospace;
 	
 	/* Box shadows for glow effects */
@@ -59,7 +64,7 @@
 	--animate-slide-in: slide-in 150ms ease-out;
 }
 
-/* Font faces - Space Grotesk (sans) + JetBrains Mono (mono), Geist kept as fallback */
+/* Font faces — Space Grotesk (body) + Grenze Gotisch (display) + JetBrains Mono (terminal) */
 @font-face {
 	font-family: "Space Grotesk";
 	src: url("/fonts/SpaceGrotesk-Regular.woff2") format("woff2");
@@ -77,6 +82,34 @@
 @font-face {
 	font-family: "Space Grotesk";
 	src: url("/fonts/SpaceGrotesk-Bold.woff2") format("woff2");
+	font-weight: 700;
+	font-style: normal;
+	font-display: swap;
+}
+@font-face {
+	font-family: "Grenze Gotisch";
+	src: url("/fonts/GrenzeGotisch-Regular.woff2") format("woff2");
+	font-weight: 400;
+	font-style: normal;
+	font-display: swap;
+}
+@font-face {
+	font-family: "Grenze Gotisch";
+	src: url("/fonts/GrenzeGotisch-Medium.woff2") format("woff2");
+	font-weight: 500;
+	font-style: normal;
+	font-display: swap;
+}
+@font-face {
+	font-family: "Grenze Gotisch";
+	src: url("/fonts/GrenzeGotisch-Bold.woff2") format("woff2");
+	font-weight: 700;
+	font-style: normal;
+	font-display: swap;
+}
+@font-face {
+	font-family: "Cinzel Decorative";
+	src: url("/fonts/CinzelDecorative-Bold.woff2") format("woff2");
 	font-weight: 700;
 	font-style: normal;
 	font-display: swap;
@@ -219,6 +252,9 @@ body {
 
 .blog-post-title h1 {
 	margin: 0 0 0.5em 0;
+	font-family: var(--font-display);
+	font-weight: 700;
+	letter-spacing: 0.03em;
 }
 
 .blog-post-date {
@@ -269,7 +305,16 @@ h4,
 h5,
 h6 {
 	@apply text-foreground;
-	/* Use browser default sizes and margins */
+	font-family: var(--font-display);
+	font-weight: 700;
+	letter-spacing: 0.02em;
+	line-height: 1.2;
+}
+
+/* Kuromu display utility — titles / brand / section chrome */
+.font-display {
+	font-family: var(--font-display);
+	letter-spacing: 0.02em;
 }
 
 /* ===================================
@@ -300,7 +345,9 @@ h6 {
 	h6 {
 		margin-top: 1.5rem;
 		margin-bottom: 1.5rem;
-		font-weight: 600;
+		font-family: var(--font-display);
+		font-weight: 700;
+		letter-spacing: 0.02em;
 	}
 	
 	h1 a,
