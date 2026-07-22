@@ -31,10 +31,17 @@ async function main() {
 
   // 1. Start dev server
   console.log('🔧 Starting dev server...');
-  const server = spawn('npx', ['astro', 'dev', '--port', String(PORT)], {
-    cwd: path.join(__dirname, '..'),
-    stdio: ['pipe', 'ignore', 'pipe'], // stdin pipe, ignore stdout, pipe stderr
-  });
+  const isWin = process.platform === 'win32';
+  const server = spawn(
+    isWin ? 'npx.cmd' : 'npx',
+    ['astro', 'dev', '--port', String(PORT)],
+    {
+      cwd: path.join(__dirname, '..'),
+      stdio: ['pipe', 'ignore', 'pipe'], // stdin pipe, ignore stdout, pipe stderr
+      shell: isWin,
+      env: process.env,
+    }
+  );
 
   server.stderr.on('data', d => process.stderr.write(d));
 
