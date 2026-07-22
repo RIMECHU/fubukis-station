@@ -45,6 +45,18 @@ const items = [
 				<span class="brand-prompt" aria-hidden="true">$</span>
 				<span class="brand-name">{t('common.brand')}</span>
 				<span class="brand-cursor" aria-hidden="true"></span>
+				<span class="brand-skull" aria-hidden="true">
+					<svg viewBox="-19 -18 38 37" xmlns="http://www.w3.org/2000/svg">
+						<path d="M0,-16 C-11,-16 -17,-9 -17,0 C-17,6 -14,10 -10,12 L-10,17 L-5,17 L-5,13 L0,13 L0,17 L5,17 L5,13 L10,13 L10,17 L10,12 C14,10 17,6 17,0 C17,-9 11,-16 0,-16 Z" fill="#e8eef8"/>
+						<circle cx="-6" cy="0" r="4" fill="#0a0e1a"/>
+						<circle cx="6" cy="0" r="4" fill="#0a0e1a"/>
+						<circle cx="-7.3" cy="-1.4" r="1.3" fill="#ffffff"/>
+						<circle cx="4.7" cy="-1.4" r="1.3" fill="#ffffff"/>
+						<path d="M0,5.5 L-1.6,9 L1.6,9 Z" fill="#0a0e1a" opacity="0.7"/>
+						<ellipse cx="-10.5" cy="6.5" rx="2.6" ry="1.5" fill="#c9a0dc" opacity="0.6"/>
+						<ellipse cx="10.5" cy="6.5" rx="2.6" ry="1.5" fill="#c9a0dc" opacity="0.6"/>
+					</svg>
+				</span>
 			</a>
 
 		<ul
@@ -167,8 +179,62 @@ const items = [
 		50% { opacity: 0; }
 	}
 
+	/* ── Brand skull buddy ── */
+	.brand-skull {
+		display: inline-flex;
+		width: 0.85em;
+		margin-left: 0.1rem;
+		filter: drop-shadow(0 0 7px color-mix(in srgb, var(--color-primary) 45%, transparent));
+	}
+
+	.brand-skull svg {
+		width: 100%;
+		height: auto;
+		animation: navSkullBob 3.2s ease-in-out infinite;
+	}
+
+	@keyframes navSkullBob {
+		0%, 100% { transform: translateY(0) rotate(-7deg); }
+		50%      { transform: translateY(-12%) rotate(7deg); }
+	}
+
+	/* Brand hover: name glows, skull gets excited */
+	.brand:hover .brand-name {
+		text-shadow: 0 0 14px color-mix(in srgb, var(--color-primary) 55%, transparent);
+	}
+
+	.brand:hover .brand-skull svg {
+		animation-duration: 0.9s;
+	}
+
+	.brand-name {
+		transition: text-shadow 0.25s ease;
+	}
+
+	/* Nav links: glow on hover */
+	.header-nav li:hover > a,
+	.header-nav li:focus-within > a {
+		text-shadow: 0 0 12px color-mix(in srgb, var(--color-primary) 40%, transparent);
+	}
+
+	/* Subtle horizon glow line under the navbar */
+	.header-nav::after {
+		content: '';
+		position: absolute;
+		left: 0;
+		right: 0;
+		bottom: -1px;
+		height: 1px;
+		background: linear-gradient(90deg,
+			transparent 0%,
+			color-mix(in srgb, var(--color-primary) 32%, transparent) 50%,
+			transparent 100%);
+		pointer-events: none;
+	}
+
 	@media (prefers-reduced-motion: reduce) {
-		.brand-cursor {
+		.brand-cursor,
+		.brand-skull svg {
 			animation: none;
 		}
 	}
@@ -184,7 +250,7 @@ const items = [
 	}
 
 	@media (min-width: 640px) {
-		.nav-link-active::after {
+		.nav-link::after {
 			content: '';
 			position: absolute;
 			left: 0.5rem;
@@ -194,6 +260,18 @@ const items = [
 			border-radius: 2px;
 			background: var(--color-primary);
 			box-shadow: 0 0 8px color-mix(in srgb, var(--color-primary) 55%, transparent);
+			transform: scaleX(0);
+			transform-origin: left center;
+			transition: transform 0.28s cubic-bezier(0.2, 0.8, 0.2, 1);
+		}
+
+		.nav-link:hover::after,
+		.nav-link-active::after {
+			transform: scaleX(1);
+		}
+
+		.nav-link-active::after {
+			transform-origin: center;
 		}
 	}
 

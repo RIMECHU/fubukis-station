@@ -14,7 +14,7 @@ export const common: Record<SupportedLang, Record<string, string>> = {
     'common.theme.lock': 'Lock',
     'common.theme.intro': 'Intro',
     'common.mobileMenu': 'Mobile menu',
-    'common.brand': 'kuromu',
+    'common.brand': 'Kuromu',
     'common.footer.rights': 'All rights reserved.',
     'common.toc.title': 'Table of Contents',
   },

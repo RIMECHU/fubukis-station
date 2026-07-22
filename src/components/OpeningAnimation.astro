@@ -160,7 +160,7 @@
     <div id="intro-content" class="absolute inset-0 z-30 flex flex-col items-center justify-center">
         <div class="logo-overline" id="logo-overline">夜乃くろむ</div>
         <div class="logo-line">
-            <h1 id="logo-text" data-value="kuromu" aria-label="kuromu"></h1>
+            <h1 id="logo-text" data-value="Kuromu" aria-label="Kuromu"></h1>
             <span class="logo-cursor" aria-hidden="true"></span>
             <span class="logo-skull" id="logo-skull" aria-hidden="true">
                 <svg viewBox="-19 -18 38 37" xmlns="http://www.w3.org/2000/svg">
@@ -406,7 +406,7 @@
         for (let i = 0; i < SKULL_COUNT; i++) spawnSkull();
 
         // ── Logo: souls materialize letter by letter ──
-        const finalText = logoText.dataset.value || 'kuromu';
+        const finalText = logoText.dataset.value || 'Kuromu';
         const letterEls: HTMLElement[] = [];
         logoText.innerHTML = '';
         finalText.split('').forEach((ch) => {
