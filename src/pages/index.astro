@@ -6,7 +6,7 @@ import LatestPosts from '../components/LatestPosts.astro';
 import { SITE_DESCRIPTION, SITE_TITLE, USER_NAME, AVATAR_URL } from '../consts';
 import { SOCIAL_LINKS, getQuickInfo } from '../config/profile';
 import OpeningAnimation from '../components/OpeningAnimation.astro';
-import { defaultLang, resolveLang, useTranslations } from '../i18n/config';
+import { defaultLang, resolveLang, useTranslations, getRelativeLocaleUrl } from '../i18n/config';
 import type { Lang } from '../i18n/config';
 import { getAllPostsWithPreferredLang } from '../i18n/i18n';
 import { Icon } from 'astro-icon/components';
@@ -148,7 +148,7 @@ const t = useTranslations(lang);
             {posts.length > 0 && (
                 <div class="landing-section delay-400">
                     <Card>
-                        <CardHeader title={t('home.latestPosts')} />
+                        <CardHeader title={t('home.latestPosts')} href={getRelativeLocaleUrl(lang, '/blog/')} linkText={t('home.viewAll')} />
                         <LatestPosts posts={posts} lang={lang} />
                     </Card>
                 </div>

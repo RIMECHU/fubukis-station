@@ -9,9 +9,11 @@ import { Icon } from 'astro-icon/components';
 interface Props {
 	title: string;
 	icon?: 'user' | 'rss' | 'folder' | 'briefcase' | 'heart';
+	href?: string;
+	linkText?: string;
 }
 
-const { title, icon } = Astro.props;
+const { title, icon, href, linkText } = Astro.props;
 
 const icons = {
 	user: 'ph:user-duotone',
@@ -30,5 +32,23 @@ const icons = {
 			style="filter: drop-shadow(0 0 4px var(--color-accent))"
 		/>
 	)}
-	<h2 class="text-lg font-semibold text-accent m-0">{title}</h2>
+		<h2 class="text-lg font-semibold text-accent m-0">{title}</h2>
+	{href && linkText && (
+		<a href={href} class="card-header-link">{linkText} →</a>
+	)}
 </div>
+
+<style>
+	.card-header-link {
+		margin-left: auto;
+		font-size: 0.75rem;
+		font-family: var(--font-mono, monospace);
+		color: color-mix(in srgb, var(--color-foreground) 45%, transparent);
+		text-decoration: none;
+		transition: color 0.15s ease;
+		flex-shrink: 0;
+	}
+	.card-header-link:hover {
+		color: var(--color-primary);
+	}
+</style>

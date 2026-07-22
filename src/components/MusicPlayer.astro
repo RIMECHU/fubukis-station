@@ -4,6 +4,11 @@ const TITLE = 'TK from 凛として時雨 - an artist';
 ---
 
 <div id="music-player" class="music-player">
+    <button class="mp-expand" id="mp-expand" aria-label="Open music player">
+        <span class="dot red"></span>
+        <span class="dot yellow"></span>
+        <span class="dot green"></span>
+    </button>
     <div class="mp-bar">
         <span class="dot red"></span>
         <span class="dot yellow"></span>
@@ -129,6 +134,19 @@ const TITLE = 'TK from 凛として時雨 - an artist';
         document.addEventListener('click', function(e) {
             var target = e.target;
             if (!target) return;
+
+            // Mobile: expand collapsed player
+            if (target.closest('#mp-expand')) {
+                var mpExpandEl = document.getElementById('music-player');
+                if (mpExpandEl) mpExpandEl.classList.add('mp-open');
+                return;
+            }
+
+            // Mobile: tap outside to re-collapse
+            var mpRoot = document.getElementById('music-player');
+            if (mpRoot && mpRoot.classList.contains('mp-open') && !target.closest('#music-player')) {
+                mpRoot.classList.remove('mp-open');
+            }
 
             // Play/pause button
             if (target.closest('#mp-toggle')) {
@@ -326,4 +344,39 @@ const TITLE = 'TK from 凛として時雨 - an artist';
     .dot.red    { background: #ff5f56; }
     .dot.yellow { background: #ffbd2e; }
     .dot.green  { background: #27c93f; }
+
+    /* ── Mobile: collapse to a floating button ── */
+    .mp-expand {
+        display: none;
+        background: none;
+        border: none;
+        padding: 0 12px;
+        cursor: pointer;
+        height: 38px;
+        align-items: center;
+        justify-content: center;
+        gap: 5px;
+    }
+    @media (max-width: 640px) {
+        .music-player {
+            border-radius: 999px;
+            bottom: 0.9rem;
+            left: 0.9rem;
+        }
+        .mp-bar {
+            display: none;
+        }
+        .mp-expand {
+            display: flex;
+        }
+        .music-player.mp-open {
+            border-radius: 8px;
+        }
+        .music-player.mp-open .mp-bar {
+            display: flex;
+        }
+        .music-player.mp-open .mp-expand {
+            display: none;
+        }
+    }
 </style>

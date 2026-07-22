@@ -343,6 +343,16 @@ h6 {
 		content: '######';
 		margin-right: 0.5rem;
 	}
+
+	/* Hash prefixes share the theme accent used by prompts and tags */
+	h1::before,
+	h2::before,
+	h3::before,
+	h4::before,
+	h5::before,
+	h6::before {
+		color: var(--color-primary);
+	}
 	
 	/* Paragraphs and spacing */
 	p,
