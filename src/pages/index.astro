@@ -1,7 +1,5 @@
 ---
 import PageLayout from '../layouts/PageLayout.astro';
-import Card from '../components/Card.astro';
-import CardHeader from '../components/CardHeader.astro';
 import LatestPosts from '../components/LatestPosts.astro';
 import { SITE_DESCRIPTION, SITE_TITLE, USER_NAME, AVATAR_URL } from '../consts';
 import { SOCIAL_LINKS, getQuickInfo } from '../config/profile';
@@ -10,6 +8,8 @@ import { defaultLang, resolveLang, useTranslations, getRelativeLocaleUrl } from 
 import type { Lang } from '../i18n/config';
 import { getAllPostsWithPreferredLang } from '../i18n/i18n';
 import { Icon } from 'astro-icon/components';
+import TermSkulls from '../components/TermSkulls.astro';
+// import KuromuMascot from '../components/KuromuMascot.astro';
 
 const { lang: langProp } = Astro.props as { lang?: Lang };
 const lang = langProp ?? resolveLang(Astro.url.pathname) ?? defaultLang;
@@ -40,16 +40,28 @@ const t = useTranslations(lang);
     class="w-full max-w-[1280px] mx-auto py-8"
 >
     <OpeningAnimation slot="overlay" />
+    <!-- <KuromuMascot slot="overlay" /> -->
 
     <!-- Decorative floating doodles + glow blobs (Yano Kuromu night style) -->
     <div class="doodles" aria-hidden="true">
         <span class="glow g1"></span>
         <span class="glow g2"></span>
-        <span class="doodle" style="--x:5%;  --y:24%; --d:14s; --dl:0s;  --r:-12deg;">$</span>
-        <span class="doodle" style="--x:91%; --y:16%; --d:17s; --dl:-4s; --r:10deg;">&gt;</span>
-        <span class="doodle" style="--x:86%; --y:72%; --d:15s; --dl:-8s; --r:14deg;">☾</span>
-        <span class="doodle" style="--x:8%;  --y:80%; --d:19s; --dl:-2s; --r:-8deg;">❯</span>
-        <span class="doodle" style="--x:47%; --y:9%;  --d:16s; --dl:-6s; --r:6deg;">✦</span>
+        <span class="glow g3"></span>
+        <span class="veil"></span>
+        <!-- Kuromu motif doodles: bones / cross / moon / star — no terminal $❯ -->
+        <span class="doodle doodle-glyph" style="--x:5%;  --y:24%; --d:14s; --dl:0s;  --r:-12deg; --c:#909ec8;">†</span>
+        <span class="doodle doodle-glyph" style="--x:91%; --y:16%; --d:17s; --dl:-4s; --r:10deg; --c:#c9a0dc;">☽</span>
+        <span class="doodle doodle-glyph" style="--x:86%; --y:72%; --d:15s; --dl:-8s; --r:14deg; --c:#aab8dd;">☾</span>
+        <span class="doodle doodle-glyph" style="--x:8%;  --y:80%; --d:19s; --dl:-2s; --r:-8deg; --c:#c3cfec;">✧</span>
+        <span class="doodle doodle-glyph" style="--x:47%; --y:9%;  --d:16s; --dl:-6s; --r:6deg; --c:#e8eef8;">✦</span>
+        <span class="doodle doodle-glyph" style="--x:28%; --y:38%; --d:18s; --dl:-3s; --r:-14deg; --c:#c9a0dc;">‡</span>
+        <span class="doodle doodle-glyph" style="--x:68%; --y:62%; --d:20s; --dl:-7s; --r:9deg; --c:#909ec8;">✵</span>
+        <span class="doodle doodle-glyph doodle-jp" style="--x:38%; --y:78%; --d:22s; --dl:-5s; --r:-6deg; --c:#c9a0dc;">ほ</span>
+        <span class="doodle doodle-glyph doodle-jp" style="--x:78%; --y:28%; --d:19s; --dl:-1s; --r:8deg; --c:#aab8dd;">ね</span>
+        <span class="bone-d" style="--x:14%; --y:12%; --d:17s; --dl:-4s; --r:-18deg;"></span>
+        <span class="bone-d" style="--x:82%; --y:58%; --d:20s; --dl:-8s; --r:22deg;"></span>
+        <span class="cross-d" style="--x:62%; --y:14%; --d:16s; --dl:-2s; --r:6deg;"></span>
+        <span class="cross-d" style="--x:22%; --y:68%; --d:18s; --dl:-6s; --r:-8deg;"></span>
         <span class="skull-d" style="--x:72%; --y:42%; --d:18s; --dl:-3s; --r:8deg;"></span>
         <span class="skull-d" style="--x:18%; --y:54%; --d:21s; --dl:-9s; --r:-10deg;"></span>
         <span class="skull-d" style="--x:56%; --y:88%; --d:16s; --dl:-5s; --r:5deg;"></span>
@@ -85,9 +97,7 @@ const t = useTranslations(lang);
             <div class="landing-section delay-100">
                 <div class="terminal">
                     <div class="term-bar">
-                        <span class="dot red"></span>
-                        <span class="dot yellow"></span>
-                        <span class="dot green"></span>
+                        <TermSkulls />
                         <span class="term-label">links</span>
                     </div>
                     <div class="term-body">
@@ -112,9 +122,7 @@ const t = useTranslations(lang);
             <div class="landing-section delay-150">
                 <div class="terminal">
                     <div class="term-bar">
-                        <span class="dot red"></span>
-                        <span class="dot yellow"></span>
-                        <span class="dot green"></span>
+                        <TermSkulls />
                         <span class="term-label">status</span>
                     </div>
                     <div class="term-body">
@@ -134,7 +142,6 @@ const t = useTranslations(lang);
                             <span class="term-prompt">$ now</span>
                             <span class="term-out">{t('home.nowPlaying')} · TK from 凛として時雨</span>
                         </div>
-                        <span class="cursor"></span>
                     </div>
                 </div>
             </div>
@@ -142,14 +149,12 @@ const t = useTranslations(lang);
 
         <!-- ═══════ RIGHT COLUMN ═══════ -->
         <main class="right-col">
-            <!-- whoami + Video side-by-side -->
+            <!-- whoami + video side-by-side (layout option 1: airier) -->
             <div class="landing-section delay-200">
                 <div class="side-by-side">
                     <div class="terminal whoami-terminal">
                         <div class="term-bar">
-                            <span class="dot red"></span>
-                            <span class="dot yellow"></span>
-                            <span class="dot green"></span>
+                            <TermSkulls />
                             <span class="term-label">whoami</span>
                         </div>
                         <div class="term-body">
@@ -167,26 +172,41 @@ const t = useTranslations(lang);
                                     <span class="term-out">{info}</span>
                                 </div>
                             ))}
-                            <span class="cursor"></span>
                         </div>
                     </div>
 
                     <div class="terminal video-terminal">
                         <div class="term-bar">
-                            <span class="dot red"></span>
-                            <span class="dot yellow"></span>
-                            <span class="dot green"></span>
+                            <TermSkulls />
                             <span class="term-label">video</span>
                         </div>
-                        <div class="term-body" style="padding: 0;">
+                        <div class="term-body video-term-body">
                             <div class="video-wrap" id="video-container">
-                                <div class="video-poster" id="video-poster"
-                                     style="background-image: url(https://img.youtube.com/vi/JUchy1KSLOI/maxresdefault.jpg);">
-                                    <div class="play-btn">
+                                <button type="button" class="video-poster" id="video-poster" aria-label="Play video">
+                                    <img
+                                        class="video-poster-img"
+                                        src="/video/poster.jpg"
+                                        alt=""
+                                        width="1280"
+                                        height="720"
+                                        loading="lazy"
+                                        decoding="async"
+                                    />
+                                    <span class="play-btn" aria-hidden="true">
                                         <svg viewBox="0 0 24 24" fill="white" width="56" height="56"><path d="M8 5v14l11-7z"/></svg>
-                                    </div>
-                                </div>
+                                    </span>
+                                </button>
                                 <div id="video-player" style="display:none; position:absolute; inset:0;"></div>
+                            </div>
+                            <div class="video-meta">
+                                <div class="term-row">
+                                    <span class="term-prompt">$ cover</span>
+                                    <span class="term-out">{t('home.videoTitle')}</span>
+                                </div>
+                                <div class="term-row">
+                                    <span class="term-prompt">$ play</span>
+                                    <span class="term-out">{t('home.videoHint')}</span>
+                                </div>
                             </div>
                         </div>
                         <script>
@@ -199,7 +219,7 @@ const t = useTranslations(lang);
                                     if (!player) return;
                                     poster.style.display = 'none';
                                     player.style.display = 'block';
-                                    player.innerHTML = '<iframe src="https://www.youtube.com/embed/JUchy1KSLOI?autoplay=1" frameborder="0" allowfullscreen allow="autoplay; fullscreen; clipboard-write; encrypted-media; gyroscope; picture-in-picture" style="position:absolute;inset:0;width:100%;height:100%;border:none;" loading="lazy"></iframe>';
+                                    player.innerHTML = '<iframe src="https://www.youtube.com/embed/aKapZ50bpKo?autoplay=1" frameborder="0" allowfullscreen allow="autoplay; fullscreen; clipboard-write; encrypted-media; gyroscope; picture-in-picture" style="position:absolute;inset:0;width:100%;height:100%;border:none;" loading="lazy"></iframe>';
                                 });
                             }
                         </script>
@@ -210,10 +230,19 @@ const t = useTranslations(lang);
             <!-- Latest Posts -->
             {posts.length > 0 && (
                 <div class="landing-section delay-400">
-                    <Card>
-                        <CardHeader title={t('home.latestPosts')} href={getRelativeLocaleUrl(lang, '/blog/')} linkText={t('home.viewAll')} />
-                        <LatestPosts posts={posts} lang={lang} layout="grid" />
-                    </Card>
+                    <div class="terminal posts-terminal">
+                        <div class="term-bar">
+                            <TermSkulls />
+                            <span class="term-heading">{t('home.latestPosts')}</span>
+                            <a
+                                class="term-link"
+                                href={getRelativeLocaleUrl(lang, '/blog/')}
+                            >{t('home.viewAll')} →</a>
+                        </div>
+                        <div class="term-body posts-body">
+                            <LatestPosts posts={posts} lang={lang} layout="grid" />
+                        </div>
+                    </div>
                 </div>
             )}
         </main>
@@ -241,19 +270,23 @@ const t = useTranslations(lang);
 </script>
 
 <style>
-    /* ── Layout ── */
+    /* Kuromu night palette accents (homepage) */
     .layout {
         display: grid;
-        gap: 1.25rem;
-        padding: 0 1rem;
+        gap: 1.5rem;
+        padding: 0 1.15rem;
         position: relative;
         z-index: 1;
+        --kuromu-mist: #909ec8;
+        --kuromu-lilac: #c9a0dc;
+        --kuromu-bone: #e8eef8;
+        --kuromu-ink: #0a0e1a;
     }
     @media (min-width: 768px) {
         .layout {
-            grid-template-columns: 280px 1fr;
+            grid-template-columns: 260px 1fr;
             align-items: start;
-            gap: 2rem;
+            gap: 2.25rem;
         }
         .left-col {
             position: sticky;
@@ -262,49 +295,77 @@ const t = useTranslations(lang);
     }
     @media (min-width: 1024px) {
         .layout {
-            grid-template-columns: 300px 1fr;
-            gap: 2.5rem;
+            grid-template-columns: 280px minmax(0, 1fr);
+            gap: 2.75rem;
+        }
+    }
+    @media (min-width: 1280px) {
+        .layout {
+            grid-template-columns: 300px minmax(0, 1fr);
+            gap: 3rem;
+            padding: 0 1.5rem;
         }
     }
     .left-col {
         display: flex;
         flex-direction: column;
-        gap: 1rem;
+        gap: 1.15rem;
     }
     .right-col {
         display: flex;
         flex-direction: column;
-        gap: 1rem;
+        gap: 1.25rem;
         min-width: 0;
     }
 
-    /* ── Side-by-side (whoami + video) ── */
+    /* ── Side-by-side (whoami + video), equal height ── */
     .side-by-side {
         display: grid;
-        grid-template-columns: 1fr 1.2fr;
-        gap: 1rem;
+        grid-template-columns: 1fr;
+        gap: 1.15rem;
         align-items: stretch;
     }
-    @media (max-width: 767px) {
+    @media (min-width: 900px) {
         .side-by-side {
-            grid-template-columns: 1fr;
+            grid-template-columns: minmax(220px, 0.92fr) minmax(280px, 1.35fr);
+            gap: 1.35rem;
         }
     }
     .whoami-terminal {
         min-width: 0;
-    }
-    .video-terminal {
-        min-width: 0;
+        height: 100%;
         display: flex;
         flex-direction: column;
     }
-    .video-terminal .term-body {
+    .whoami-terminal .term-body {
         flex: 1;
-        display: flex;
-        align-items: stretch;
     }
-    .video-terminal .video-wrap {
+    .video-terminal {
+        min-width: 0;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+    }
+    .video-term-body {
+        padding: 0 !important;
+        display: flex !important;
+        flex-direction: column;
         flex: 1;
+        gap: 0 !important;
+        background: transparent;
+    }
+    .video-meta {
+        flex: 1;
+        display: grid;
+        align-content: center;
+        gap: 0.35rem;
+        margin: 0;
+        padding: 0.7rem 0.9rem 0.85rem;
+        border-top: 1px solid color-mix(in srgb, #909ec8 32%, transparent);
+        background: linear-gradient(180deg,
+            color-mix(in srgb, #909ec8 12%, #0a0e1a),
+            color-mix(in srgb, #c9a0dc 10%, #0a0e1a));
+        min-height: 0;
     }
 
     /* ── Hero ── */
@@ -319,14 +380,20 @@ const t = useTranslations(lang);
         top: 50%;
         right: -6px;
         padding: 0.22rem 0.6rem;
-        font-family: var(--font-mono, monospace);
-        font-size: 0.68rem;
-        font-weight: 600;
+        font-family: var(--font-display);
+        font-size: 0.72rem;
+        font-weight: 700;
+        letter-spacing: 0.04em;
         white-space: nowrap;
-        color: var(--color-primary);
-        background: color-mix(in srgb, var(--color-primary) 8%, transparent);
-        border: 1.5px dashed color-mix(in srgb, var(--color-primary) 55%, transparent);
+        color: #f2f5fc;
+        background: linear-gradient(135deg,
+            color-mix(in srgb, #909ec8 42%, transparent),
+            color-mix(in srgb, #c9a0dc 36%, transparent));
+        border: 1.5px dashed color-mix(in srgb, #c9a0dc 80%, #909ec8);
         border-radius: 999px;
+        box-shadow:
+            0 0 18px color-mix(in srgb, #909ec8 45%, transparent),
+            0 0 28px color-mix(in srgb, #c9a0dc 28%, transparent);
         transform: translateY(-50%) rotate(6deg);
         animation: stickerBob 5s ease-in-out infinite;
         pointer-events: none;
@@ -350,39 +417,81 @@ const t = useTranslations(lang);
         overflow: hidden;
         pointer-events: none;
     }
+    .veil {
+        position: absolute;
+        inset: 0;
+        background:
+            radial-gradient(ellipse 75% 50% at 88% 6%, rgba(144, 158, 200, 0.28), transparent 58%),
+            radial-gradient(ellipse 60% 45% at 8% 88%, rgba(201, 160, 220, 0.22), transparent 60%),
+            radial-gradient(ellipse 55% 40% at 48% 48%, rgba(232, 238, 248, 0.08), transparent 68%);
+    }
     .glow {
         position: absolute;
-        width: 480px;
-        height: 480px;
+        width: 560px;
+        height: 560px;
         border-radius: 999px;
-        filter: blur(70px);
-        background: color-mix(in srgb, var(--color-primary) 7%, transparent);
+        filter: blur(72px);
+        background: color-mix(in srgb, #909ec8 28%, transparent);
     }
-    .glow.g1 { top: -120px; right: -80px; }
+    .glow.g1 { top: -140px; right: -90px; }
     .glow.g2 {
-        bottom: -140px;
-        left: -100px;
-        background: color-mix(in srgb, var(--color-primary) 5%, transparent);
+        bottom: -160px;
+        left: -110px;
+        background: color-mix(in srgb, #c9a0dc 24%, transparent);
+    }
+    .glow.g3 {
+        top: 38%;
+        left: 42%;
+        width: 400px;
+        height: 400px;
+        background: color-mix(in srgb, #e8eef8 12%, transparent);
     }
     .doodle {
         position: absolute;
         left: var(--x);
         top: var(--y);
-        font-family: var(--font-mono, monospace);
-        font-size: 1.3rem;
+        font-family: var(--font-display);
+        font-size: 1.45rem;
         font-weight: 700;
-        color: color-mix(in srgb, var(--color-primary) 20%, transparent);
+        line-height: 1;
+        color: color-mix(in srgb, var(--c, var(--color-primary)) 58%, transparent);
+        text-shadow: 0 0 16px color-mix(in srgb, var(--c, var(--color-primary)) 55%, transparent);
         animation: doodleFloat var(--d) ease-in-out var(--dl) infinite alternate;
+        user-select: none;
+        pointer-events: none;
     }
-    .skull-d {
+    .doodle-jp {
+        font-size: 1.05rem;
+        letter-spacing: 0.04em;
+        opacity: 0.9;
+    }
+    .skull-d,
+    .bone-d,
+    .cross-d {
         position: absolute;
         left: var(--x);
         top: var(--y);
-        width: 22px;
-        height: 22px;
-        opacity: 0.5;
-        background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='-19 -18 38 37'%3E%3Cpath d='M0,-16 C-11,-16 -17,-9 -17,0 C-17,6 -14,10 -10,12 L-10,17 L-5,17 L-5,13 L0,13 L0,17 L5,17 L5,13 L10,13 L10,17 L10,12 C14,10 17,6 17,0 C17,-9 11,-16 0,-16 Z' fill='%23aab8dd'/%3E%3Ccircle cx='-6' cy='0' r='4' fill='%230a0e1a'/%3E%3Ccircle cx='6' cy='0' r='4' fill='%230a0e1a'/%3E%3C/svg%3E") center/contain no-repeat;
+        opacity: 0.78;
+        pointer-events: none;
         animation: doodleFloat var(--d) ease-in-out var(--dl) infinite alternate;
+    }
+    .skull-d {
+        width: 24px;
+        height: 24px;
+        filter: drop-shadow(0 0 10px rgba(144, 158, 200, 0.65));
+        background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='-19 -18 38 37'%3E%3Cpath d='M0,-16 C-11,-16 -17,-9 -17,0 C-17,6 -14,10 -10,12 L-10,17 L-5,17 L-5,13 L0,13 L0,17 L5,17 L5,13 L10,13 L10,17 L10,12 C14,10 17,6 17,0 C17,-9 11,-16 0,-16 Z' fill='%23c3cfec'/%3E%3Ccircle cx='-6' cy='0' r='4' fill='%230a0e1a'/%3E%3Ccircle cx='6' cy='0' r='4' fill='%230a0e1a'/%3E%3Cellipse cx='-10.5' cy='6.5' rx='2.4' ry='1.4' fill='%23c9a0dc' opacity='0.9'/%3E%3Cellipse cx='10.5' cy='6.5' rx='2.4' ry='1.4' fill='%23c9a0dc' opacity='0.9'/%3E%3C/svg%3E") center/contain no-repeat;
+    }
+    .bone-d {
+        width: 34px;
+        height: 26px;
+        filter: drop-shadow(0 0 8px rgba(201, 160, 220, 0.45));
+        background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 48'%3E%3Cg transform='rotate(-38 32 24)'%3E%3Crect x='6' y='20' width='52' height='8' rx='4' fill='%23e8eef8'/%3E%3Ccircle cx='8' cy='24' r='6' fill='%23e8eef8'/%3E%3Ccircle cx='56' cy='24' r='6' fill='%23e8eef8'/%3E%3C/g%3E%3Cg transform='rotate(38 32 24)'%3E%3Crect x='6' y='20' width='52' height='8' rx='4' fill='%23c3cfec'/%3E%3Ccircle cx='8' cy='24' r='6' fill='%23c3cfec'/%3E%3Ccircle cx='56' cy='24' r='6' fill='%23c3cfec'/%3E%3C/g%3E%3C/svg%3E") center/contain no-repeat;
+    }
+    .cross-d {
+        width: 18px;
+        height: 24px;
+        filter: drop-shadow(0 0 8px rgba(144, 158, 200, 0.5));
+        background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 28 36'%3E%3Cpath d='M14 2.5 L14 33.5' stroke='%23aab8dd' stroke-width='2.4' stroke-linecap='round'/%3E%3Cpath d='M5 11.5 L23 11.5' stroke='%23aab8dd' stroke-width='2.4' stroke-linecap='round'/%3E%3Ccircle cx='14' cy='2.8' r='2.1' fill='%23c9a0dc'/%3E%3Ccircle cx='14' cy='33.2' r='2.1' fill='%23c9a0dc'/%3E%3Ccircle cx='5.2' cy='11.5' r='1.8' fill='%23e8eef8'/%3E%3Ccircle cx='22.8' cy='11.5' r='1.8' fill='%23e8eef8'/%3E%3C/svg%3E") center/contain no-repeat;
     }
     @keyframes doodleFloat {
         from { transform: translateY(0) rotate(var(--r, 24deg)); }
@@ -391,6 +500,8 @@ const t = useTranslations(lang);
     @media (prefers-reduced-motion: reduce) {
         .doodle,
         .skull-d,
+        .bone-d,
+        .cross-d,
         .hero-sticker {
             animation: none;
         }
@@ -403,10 +514,12 @@ const t = useTranslations(lang);
         width: 88px;
         height: 88px;
         border-radius: 999px;
-        border: 2.5px solid color-mix(in srgb, var(--color-primary) 55%, transparent);
-        outline: 2px dashed color-mix(in srgb, var(--color-primary) 30%, transparent);
+        border: 2.5px solid color-mix(in srgb, #aab8dd 85%, transparent);
+        outline: 2px dashed color-mix(in srgb, #c9a0dc 70%, transparent);
         outline-offset: 4px;
-        box-shadow: 0 0 24px color-mix(in srgb, var(--color-primary) 18%, transparent);
+        box-shadow:
+            0 0 28px color-mix(in srgb, #909ec8 48%, transparent),
+            0 0 52px color-mix(in srgb, #c9a0dc 32%, transparent);
         object-fit: cover;
         display: block;
     }
@@ -417,9 +530,9 @@ const t = useTranslations(lang);
         width: 14px;
         height: 14px;
         border-radius: 999px;
-        background: #27c93f;
+        background: #c3cfec;
         border: 2.5px solid var(--color-background);
-        box-shadow: 0 0 10px color-mix(in srgb, #27c93f 55%, transparent);
+        box-shadow: 0 0 14px color-mix(in srgb, #c9a0dc 80%, #909ec8);
         animation: dotPulse 2.4s ease-in-out infinite;
     }
     @keyframes dotPulse {
@@ -436,37 +549,51 @@ const t = useTranslations(lang);
     }
     .name {
         margin: 0;
-        font-size: 1.35rem;
-        font-weight: 800;
-        color: var(--color-foreground);
+        font-size: 1.45rem;
+        font-weight: 700;
+        font-family: var(--font-display);
+        letter-spacing: 0.04em;
+        color: transparent;
+        background-image: linear-gradient(185deg, #ffffff 0%, #e8eef8 28%, #aab8dd 58%, #c9a0dc 100%);
+        -webkit-background-clip: text;
+        background-clip: text;
+        filter: drop-shadow(0 0 14px rgba(144, 158, 200, 0.65));
     }
     .tagline {
         margin: 0.15rem 0 0;
         font-size: 0.85rem;
-        color: color-mix(in srgb, var(--color-foreground) 55%, transparent);
+        color: color-mix(in srgb, #c3cfec 82%, #c9a0dc);
+        text-shadow: 0 0 10px rgba(144, 158, 200, 0.25);
     }
 
-    /* ── Terminal (Kuromu night-blue borders) ── */
+    /* ── Terminal (Kuromu mist-blue + lilac night chrome) ── */
     .terminal {
-        border: 1px solid color-mix(in srgb, var(--color-primary) 22%, transparent);
+        border: 1px solid color-mix(in srgb, #909ec8 48%, transparent);
         border-radius: 14px;
         overflow: hidden;
         font-family: var(--font-mono, monospace);
         font-size: 0.85rem;
-        background: color-mix(in srgb, var(--color-primary) 3%, transparent);
+        background:
+            linear-gradient(165deg,
+                color-mix(in srgb, #909ec8 16%, transparent),
+                color-mix(in srgb, #c9a0dc 10%, transparent) 48%,
+                color-mix(in srgb, var(--color-background) 88%, transparent));
         box-shadow:
-            0 2px 16px color-mix(in srgb, var(--color-primary) 7%, transparent),
-            inset 0 1px 0 color-mix(in srgb, var(--color-primary) 10%, transparent);
+            0 4px 24px color-mix(in srgb, #909ec8 22%, transparent),
+            0 0 32px color-mix(in srgb, #c9a0dc 12%, transparent),
+            0 0 0 1px color-mix(in srgb, #c9a0dc 16%, transparent) inset,
+            inset 0 1px 0 color-mix(in srgb, #e8eef8 14%, transparent);
         transition:
             border-color 0.25s ease,
             box-shadow 0.25s ease,
             transform 0.25s ease;
     }
     .terminal:hover {
-        border-color: color-mix(in srgb, var(--color-primary) 45%, transparent);
+        border-color: color-mix(in srgb, #c3cfec 70%, #c9a0dc);
         box-shadow:
-            0 6px 28px color-mix(in srgb, var(--color-primary) 14%, transparent),
-            inset 0 1px 0 color-mix(in srgb, var(--color-primary) 16%, transparent);
+            0 10px 36px color-mix(in srgb, #909ec8 30%, transparent),
+            0 0 40px color-mix(in srgb, #c9a0dc 22%, transparent),
+            inset 0 1px 0 color-mix(in srgb, #e8eef8 18%, transparent);
         transform: translateY(-2px);
     }
     .term-bar {
@@ -474,60 +601,91 @@ const t = useTranslations(lang);
         align-items: center;
         gap: 0.35rem;
         padding: 0.45rem 0.75rem;
-        background: color-mix(in srgb, var(--color-primary) 8%, transparent);
-        border-bottom: 1px solid color-mix(in srgb, var(--color-primary) 16%, transparent);
+        background: linear-gradient(90deg,
+            color-mix(in srgb, #909ec8 28%, transparent),
+            color-mix(in srgb, #c9a0dc 20%, transparent));
+        border-bottom: 1px solid color-mix(in srgb, #909ec8 40%, transparent);
     }
     .term-label {
         margin-left: auto;
         font-size: 0.72rem;
-        text-transform: uppercase;
-        letter-spacing: 0.06em;
-        color: color-mix(in srgb, var(--color-primary) 65%, transparent);
+        font-family: var(--font-display);
+        letter-spacing: 0.08em;
+        color: color-mix(in srgb, #e8eef8 88%, #c9a0dc);
+        text-shadow: 0 0 10px rgba(144, 158, 200, 0.35);
+        text-transform: none;
     }
-    /* 月相三圆点：由暗到亮的雾蓝，呼应夜主题 */
-    .dot { width: 9px; height: 9px; border-radius: 999px; }
-    .dot.red    { background: color-mix(in srgb, var(--color-primary) 28%, transparent); }
-    .dot.yellow { background: color-mix(in srgb, var(--color-primary) 55%, transparent); }
-    .dot.green  { background: var(--color-primary); box-shadow: 0 0 6px color-mix(in srgb, var(--color-primary) 70%, transparent); }
+    .term-heading {
+        font-family: var(--font-display);
+        font-size: 1rem;
+        font-weight: 700;
+        letter-spacing: 0.06em;
+        color: #f2f5fc;
+        text-shadow: 0 0 16px rgba(144, 158, 200, 0.65);
+        line-height: 1;
+    }
+    .term-link {
+        margin-left: auto;
+        font-size: 0.72rem;
+        font-family: var(--font-mono, monospace);
+        color: #aab8dd;
+        text-decoration: none;
+        letter-spacing: 0.02em;
+        transition: color 0.2s ease, text-shadow 0.2s ease;
+        flex-shrink: 0;
+    }
+    .term-link:hover {
+        color: #e0c4f0;
+        text-shadow: 0 0 12px rgba(201, 160, 220, 0.7);
+    }
+    .posts-body {
+        padding: 0.65rem 0.75rem 0.8rem;
+    }
+    .posts-body :global(.post-list) {
+        gap: 0.55rem;
+    }
+    /* 月相感三骷髅由 TermSkulls 组件提供 */
+    .term-bar :global(.term-skulls) {
+        margin-right: 0.1rem;
+    }
 
     .term-body {
         padding: 0.8rem 0.9rem;
         display: grid;
         gap: 0.5rem;
-        background: color-mix(in srgb, var(--color-background) 98%, transparent);
+        background: linear-gradient(180deg,
+            color-mix(in srgb, #909ec8 12%, transparent),
+            color-mix(in srgb, #c9a0dc 6%, transparent) 38%,
+            color-mix(in srgb, var(--color-background) 92%, transparent) 72%);
     }
     .term-row {
         display: grid;
         gap: 0.1rem;
     }
     .term-prompt {
-        color: var(--color-primary);
+        color: #c3cfec;
         font-weight: 600;
+        text-shadow: 0 0 12px rgba(144, 158, 200, 0.55);
     }
     .term-out {
-        color: color-mix(in srgb, var(--color-foreground) 75%, transparent);
+        color: color-mix(in srgb, #e8eef8 88%, transparent);
         padding-left: 0.5rem;
-        border-left: 2px dashed color-mix(in srgb, var(--color-primary) 40%, transparent);
+        border-left: 2px dashed color-mix(in srgb, #c9a0dc 65%, #909ec8);
     }
     .status-rotator {
         display: inline-block;
         transition: opacity 0.25s ease;
     }
-    .cursor {
-        display: inline-block;
-        width: 0.6em;
-        height: 1.1em;
-        background: var(--color-primary);
-        animation: blink 1s step-end infinite;
-    }
-    @keyframes blink { 50% { opacity: 0; } }
 
     /* ── Video ── */
     .video-wrap {
         position: relative;
-        padding-bottom: 56.25%;
-        height: 0;
-        background: #000;
+        width: 100%;
+        aspect-ratio: 16 / 9;
+        background: transparent;
+        overflow: hidden;
+        flex-shrink: 0;
+        line-height: 0;
     }
     .video-wrap iframe {
         position: absolute;
@@ -539,26 +697,57 @@ const t = useTranslations(lang);
     .video-poster {
         position: absolute;
         inset: 0;
-        background: #0d0d0d center/cover no-repeat;
+        padding: 0;
+        margin: 0;
+        border: none;
+        background: transparent;
         cursor: pointer;
-        display: flex;
-        align-items: center;
-        justify-content: center;
+        display: block;
+        overflow: hidden;
+        line-height: 0;
+    }
+    .video-poster-img {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100% !important;
+        max-width: none;
+        max-height: none;
+        margin: 0;
+        border: 0;
+        border-radius: 0;
+        object-fit: cover;
+        object-position: center bottom;
+        pointer-events: none;
+        display: block;
+        vertical-align: top;
     }
     .play-btn {
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
         width: 72px;
         height: 72px;
         border-radius: 999px;
-        background: rgba(0,0,0,0.7);
-        border: 2px solid rgba(255,255,255,0.6);
+        background: rgba(10, 14, 26, 0.62);
+        border: 2px solid color-mix(in srgb, #e8eef8 75%, transparent);
         display: flex;
         align-items: center;
         justify-content: center;
-        transition: background 0.2s, border-color 0.2s;
+        transition: background 0.2s, border-color 0.2s, box-shadow 0.2s;
+        box-shadow:
+            0 0 22px color-mix(in srgb, #909ec8 55%, transparent),
+            0 0 36px color-mix(in srgb, #c9a0dc 28%, transparent);
+        pointer-events: none;
+        z-index: 1;
     }
     .video-poster:hover .play-btn {
-        background: var(--color-primary);
-        border-color: var(--color-primary);
+        background: color-mix(in srgb, #909ec8 88%, #c9a0dc);
+        border-color: #e8eef8;
+        box-shadow:
+            0 0 28px color-mix(in srgb, #909ec8 70%, transparent),
+            0 0 44px color-mix(in srgb, #c9a0dc 45%, transparent);
     }
 
     /* ── Socials ── */
@@ -573,17 +762,18 @@ const t = useTranslations(lang);
         align-items: center;
         gap: 0.5rem;
         padding: 0.4rem 0.9rem;
-        border: 1px solid color-mix(in srgb, var(--color-primary) 25%, transparent);
+        border: 1px solid color-mix(in srgb, #909ec8 42%, transparent);
         border-radius: 999px;
-        color: var(--color-foreground);
+        color: #e8eef8;
+        background: color-mix(in srgb, #909ec8 8%, transparent);
         text-decoration: none;
         font-size: 0.9rem;
         transition: border-color 0.2s, background 0.2s, box-shadow 0.2s, transform 0.2s;
     }
     .social-link:hover {
-        border-color: var(--color-primary);
-        background: color-mix(in srgb, var(--color-primary) 10%, transparent);
-        box-shadow: 0 0 16px color-mix(in srgb, var(--color-primary) 25%, transparent);
+        border-color: #c9a0dc;
+        background: color-mix(in srgb, #c9a0dc 18%, #909ec8);
+        box-shadow: 0 0 20px color-mix(in srgb, #c9a0dc 40%, transparent);
         transform: translateY(-1px);
     }
 </style>

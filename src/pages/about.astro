@@ -2,6 +2,7 @@
 import Layout from '../layouts/BlogPost.astro';
 import { defaultLang, resolveLang, type Lang, useTranslations } from '../i18n/config';
 import { AVATAR_URL } from '../consts';
+import TermSkulls from '../components/TermSkulls.astro';
 
 const { lang: langProp } = Astro.props as { lang?: Lang };
 const lang = langProp ?? resolveLang(Astro.url.pathname) ?? defaultLang;
@@ -69,9 +70,7 @@ const d = content[lang] ?? content[defaultLang];
         <!-- ── Terminal ── -->
         <div class="terminal">
             <div class="term-bar">
-                <span class="dot red"></span>
-                <span class="dot yellow"></span>
-                <span class="dot green"></span>
+                <TermSkulls />
                 <span class="term-label">{d.terminalTitle}</span>
             </div>
             <div class="term-body">
@@ -187,11 +186,7 @@ const d = content[lang] ?? content[defaultLang];
         letter-spacing: 0.06em;
         color: color-mix(in srgb, var(--color-foreground) 40%, transparent);
     }
-    /* 月相三圆点：由暗到亮的雾蓝，呼应夜主题 */
-    .dot { width: 9px; height: 9px; border-radius: 999px; }
-    .dot.red    { background: color-mix(in srgb, var(--color-primary) 28%, transparent); }
-    .dot.yellow { background: color-mix(in srgb, var(--color-primary) 55%, transparent); }
-    .dot.green  { background: var(--color-primary); box-shadow: 0 0 6px color-mix(in srgb, var(--color-primary) 70%, transparent); }
+    /* 月相感三骷髅由 TermSkulls 组件提供 */
 
     .term-body {
         padding: 0.9rem 1rem;

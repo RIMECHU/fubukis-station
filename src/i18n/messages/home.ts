@@ -9,6 +9,8 @@ export const home: Record<SupportedLang, Record<string, string>> = {
     'home.uptime': 'online {n}d',
     'home.postsCount': '{n} posts · {m} tags',
     'home.nowPlaying': 'listening',
+    'home.videoTitle': 'ぶいすぽ鯖で夏祭り準備',
+    'home.videoHint': 'click to play · Cover',
   },
   zh: {
     'home.intro': '一个奇怪的玩家。',
@@ -18,5 +20,7 @@ export const home: Record<SupportedLang, Record<string, string>> = {
     'home.uptime': '建站 {n} 天',
     'home.postsCount': '{n} 篇 · {m} 个标签',
     'home.nowPlaying': '正在听',
+    'home.videoTitle': 'ぶいすぽ鯖で夏祭り準備',
+    'home.videoHint': '点击播放 · Cover',
   },
 };

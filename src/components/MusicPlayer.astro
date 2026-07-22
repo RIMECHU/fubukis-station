@@ -1,18 +1,16 @@
 ---
+import TermSkulls from './TermSkulls.astro';
+
 const SRC = '/TK from 凛として時雨 - an artist.mp3';
 const TITLE = 'TK from 凛として時雨 - an artist';
 ---
 
 <div id="music-player" class="music-player">
     <button class="mp-expand" id="mp-expand" aria-label="Open music player">
-        <span class="dot red"></span>
-        <span class="dot yellow"></span>
-        <span class="dot green"></span>
+        <TermSkulls />
     </button>
     <div class="mp-bar">
-        <span class="dot red"></span>
-        <span class="dot yellow"></span>
-        <span class="dot green"></span>
+        <TermSkulls />
         <span class="mp-title">{TITLE}</span>
         <div class="mp-vol-wrap" id="mp-vol-wrap">
             <button class="mp-btn mp-vol-icon" id="mp-vol-icon" aria-label="Volume">🔊</button>
@@ -340,11 +338,12 @@ const TITLE = 'TK from 凛として時雨 - an artist';
         color: color-mix(in srgb, var(--color-foreground) 50%, transparent);
     }
 
-    /* 月相三圆点：由暗到亮的雾蓝，呼应夜主题 */
-    .dot { width: 7px; height: 7px; border-radius: 999px; }
-    .dot.red    { background: color-mix(in srgb, var(--color-primary) 28%, transparent); }
-    .dot.yellow { background: color-mix(in srgb, var(--color-primary) 55%, transparent); }
-    .dot.green  { background: var(--color-primary); box-shadow: 0 0 5px color-mix(in srgb, var(--color-primary) 70%, transparent); }
+    /* 月相感三骷髅由 TermSkulls 组件提供 */
+    .mp-bar :global(.term-skull),
+    .mp-expand :global(.term-skull) {
+        width: 9px;
+        height: 9px;
+    }
 
     /* ── Mobile: collapse to a floating button ── */
     .mp-expand {

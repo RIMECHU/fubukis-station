@@ -1,0 +1,80 @@
+---
+/**
+ * Three tiny Kuromu skulls — replaces classic traffic-light dots on terminal chrome.
+ * Opacity goes dim → mid → bright (夜の月相感).
+ */
+---
+
+<span class="term-skulls" aria-hidden="true">
+	<span class="term-skull dim">
+		<svg viewBox="-19 -18 38 37" xmlns="http://www.w3.org/2000/svg">
+			<path d="M0,-16 C-11,-16 -17,-9 -17,0 C-17,6 -14,10 -10,12 L-10,17 L-5,17 L-5,13 L0,13 L0,17 L5,17 L5,13 L10,13 L10,17 L10,12 C14,10 17,6 17,0 C17,-9 11,-16 0,-16 Z" fill="currentColor"/>
+			<circle cx="-6" cy="0" r="4" fill="#0a0e1a"/>
+			<circle cx="6" cy="0" r="4" fill="#0a0e1a"/>
+			<circle cx="-7.2" cy="-1.3" r="1.2" fill="#ffffff" opacity="0.85"/>
+			<circle cx="4.8" cy="-1.3" r="1.2" fill="#ffffff" opacity="0.85"/>
+			<path d="M0,5.5 L-1.5,8.8 L1.5,8.8 Z" fill="#0a0e1a" opacity="0.75"/>
+		</svg>
+	</span>
+	<span class="term-skull mid">
+		<svg viewBox="-19 -18 38 37" xmlns="http://www.w3.org/2000/svg">
+			<path d="M0,-16 C-11,-16 -17,-9 -17,0 C-17,6 -14,10 -10,12 L-10,17 L-5,17 L-5,13 L0,13 L0,17 L5,17 L5,13 L10,13 L10,17 L10,12 C14,10 17,6 17,0 C17,-9 11,-16 0,-16 Z" fill="currentColor"/>
+			<circle cx="-6" cy="0" r="4" fill="#0a0e1a"/>
+			<circle cx="6" cy="0" r="4" fill="#0a0e1a"/>
+			<circle cx="-7.2" cy="-1.3" r="1.2" fill="#ffffff" opacity="0.85"/>
+			<circle cx="4.8" cy="-1.3" r="1.2" fill="#ffffff" opacity="0.85"/>
+			<path d="M0,5.5 L-1.5,8.8 L1.5,8.8 Z" fill="#0a0e1a" opacity="0.75"/>
+		</svg>
+	</span>
+	<span class="term-skull lit">
+		<svg viewBox="-19 -18 38 37" xmlns="http://www.w3.org/2000/svg">
+			<path d="M0,-16 C-11,-16 -17,-9 -17,0 C-17,6 -14,10 -10,12 L-10,17 L-5,17 L-5,13 L0,13 L0,17 L5,17 L5,13 L10,13 L10,17 L10,12 C14,10 17,6 17,0 C17,-9 11,-16 0,-16 Z" fill="currentColor"/>
+			<circle cx="-6" cy="0" r="4" fill="#0a0e1a"/>
+			<circle cx="6" cy="0" r="4" fill="#0a0e1a"/>
+			<circle cx="-7.2" cy="-1.3" r="1.2" fill="#ffffff" opacity="0.85"/>
+			<circle cx="4.8" cy="-1.3" r="1.2" fill="#ffffff" opacity="0.85"/>
+			<path d="M0,5.5 L-1.5,8.8 L1.5,8.8 Z" fill="#0a0e1a" opacity="0.75"/>
+			<ellipse cx="-10.5" cy="6.5" rx="2.4" ry="1.4" fill="#c9a0dc" opacity="0.55"/>
+			<ellipse cx="10.5" cy="6.5" rx="2.4" ry="1.4" fill="#c9a0dc" opacity="0.55"/>
+		</svg>
+	</span>
+</span>
+
+<style>
+	.term-skulls {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.28rem;
+		flex-shrink: 0;
+	}
+
+	.term-skull {
+		display: inline-flex;
+		width: 11px;
+		height: 11px;
+		color: var(--color-primary, #909ec8);
+		line-height: 0;
+	}
+
+	.term-skull svg {
+		width: 100%;
+		height: 100%;
+		display: block;
+		overflow: visible;
+	}
+
+	.term-skull.dim {
+		opacity: 0.38;
+		filter: drop-shadow(0 0 2px color-mix(in srgb, var(--color-primary) 25%, transparent));
+	}
+
+	.term-skull.mid {
+		opacity: 0.68;
+		filter: drop-shadow(0 0 3px color-mix(in srgb, var(--color-primary) 40%, transparent));
+	}
+
+	.term-skull.lit {
+		opacity: 1;
+		filter: drop-shadow(0 0 5px color-mix(in srgb, var(--color-primary) 70%, transparent));
+	}
+</style>

@@ -1,0 +1,191 @@
+---
+/**
+ * Home-page corner mascot using a local image asset.
+ * Place official / licensed art at: public/mascot/kuromu.png
+ * (Optional: public/mascot/kuromu.webp)
+ *
+ * Do not commit copyrighted art unless you have redistribution rights.
+ */
+const SRC_WEBP = '/mascot/kuromu.webp';
+const SRC_PNG = '/mascot/kuromu.png';
+const SRC_JPG = '/mascot/kuromu.jpg';
+---
+
+<aside class="kuromu-mascot" id="kuromu-mascot" aria-label="Kuromu">
+	<button type="button" class="mascot-hit" id="mascot-hit" aria-label="Kuromu">
+		<img
+			class="mascot-img"
+			id="mascot-img"
+			src={SRC_PNG}
+			alt="夜乃くろむ"
+			width="220"
+			height="280"
+			decoding="async"
+			loading="lazy"
+		/>
+		<span class="mascot-bubble" id="mascot-bubble" hidden>うみんぐ〜</span>
+	</button>
+	<p class="mascot-hint" id="mascot-hint" hidden>
+		把立绘放到 <code>public/mascot/kuromu.png</code>
+	</p>
+</aside>
+
+<script>
+	(function () {
+		function bind() {
+			var btn = document.getElementById('mascot-hit');
+			var bubble = document.getElementById('mascot-bubble');
+			var root = document.getElementById('kuromu-mascot');
+			var img = document.getElementById('mascot-img');
+			var hint = document.getElementById('mascot-hint');
+			if (!btn || !root || !img) return;
+
+			// Try png → webp → jpg
+			var candidates = ['/mascot/kuromu.png', '/mascot/kuromu.webp', '/mascot/kuromu.jpg'];
+			var idx = 0;
+			function tryNext() {
+				if (idx >= candidates.length) {
+					root.classList.add('missing');
+					if (hint) hint.hidden = false;
+					return;
+				}
+				var src = candidates[idx++];
+				var probe = new Image();
+				probe.onload = function () {
+					img.setAttribute('src', src);
+					root.classList.remove('missing');
+					if (hint) hint.hidden = true;
+				};
+				probe.onerror = tryNext;
+				probe.src = src;
+			}
+			tryNext();
+
+			if (btn.dataset.bound === '1') return;
+			btn.dataset.bound = '1';
+
+			var lines = ['うみんぐ〜', 'ほねほね！', '夜更かし？', 'Kuromu♪', '💀⛓️'];
+			var hideTimer = 0;
+			btn.addEventListener('click', function () {
+				root.classList.remove('wave');
+				void root.offsetWidth;
+				root.classList.add('wave');
+				if (bubble) {
+					bubble.hidden = false;
+					bubble.textContent = lines[Math.floor(Math.random() * lines.length)];
+					window.clearTimeout(hideTimer);
+					hideTimer = window.setTimeout(function () {
+						bubble.hidden = true;
+					}, 1800);
+				}
+			});
+		}
+
+		document.addEventListener('astro:page-load', bind);
+		if (document.readyState !== 'loading') bind();
+	})();
+</script>
+
+<style>
+	.kuromu-mascot {
+		position: fixed;
+		right: 0.15rem;
+		bottom: 0;
+		z-index: 40;
+		width: clamp(130px, 17vw, 210px);
+		pointer-events: none;
+		filter: drop-shadow(0 14px 24px rgba(8, 10, 18, 0.55));
+		animation: mascotBob 3.8s ease-in-out infinite;
+	}
+
+	.mascot-hit {
+		all: unset;
+		display: block;
+		width: 100%;
+		cursor: pointer;
+		pointer-events: auto;
+		position: relative;
+	}
+
+	.mascot-img {
+		width: 100%;
+		height: auto;
+		display: block;
+		object-fit: contain;
+		object-position: bottom center;
+		user-select: none;
+		-webkit-user-drag: none;
+	}
+
+	.mascot-bubble {
+		position: absolute;
+		right: 78%;
+		top: 12%;
+		padding: 0.28rem 0.55rem;
+		border-radius: 10px 10px 4px 10px;
+		background: color-mix(in srgb, var(--color-background) 92%, #909ec8);
+		border: 1px solid color-mix(in srgb, var(--color-primary) 45%, transparent);
+		color: var(--color-primary);
+		font-family: var(--font-display);
+		font-size: 0.78rem;
+		letter-spacing: 0.04em;
+		white-space: nowrap;
+		box-shadow: 0 0 14px color-mix(in srgb, var(--color-primary) 25%, transparent);
+		animation: bubbleIn 0.35s ease both;
+	}
+
+	.mascot-hint {
+		margin: 0.35rem 0 0;
+		padding: 0.35rem 0.5rem;
+		font-size: 0.65rem;
+		font-family: var(--font-mono, monospace);
+		color: color-mix(in srgb, var(--color-foreground) 65%, transparent);
+		background: color-mix(in srgb, var(--color-background) 88%, transparent);
+		border: 1px dashed color-mix(in srgb, var(--color-primary) 40%, transparent);
+		border-radius: 8px;
+		pointer-events: none;
+	}
+
+	.mascot-hint code {
+		color: var(--color-primary);
+	}
+
+	.kuromu-mascot.missing .mascot-img {
+		opacity: 0.15;
+		filter: grayscale(1);
+	}
+
+	@keyframes bubbleIn {
+		from { opacity: 0; transform: translateY(6px) scale(0.9); }
+		to   { opacity: 1; transform: translateY(0) scale(1); }
+	}
+
+	@keyframes mascotBob {
+		0%, 100% { transform: translateY(0); }
+		50%      { transform: translateY(-6px); }
+	}
+
+	.kuromu-mascot.wave .mascot-img {
+		animation: mascotWave 0.65s ease;
+	}
+
+	@keyframes mascotWave {
+		0%, 100% { transform: rotate(0deg); }
+		30%      { transform: rotate(-5deg); }
+		60%      { transform: rotate(6deg); }
+	}
+
+	@media (max-width: 640px) {
+		.kuromu-mascot {
+			width: 100px;
+			right: 0;
+			bottom: 4.2rem;
+		}
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.kuromu-mascot {
+			animation: none;
+		}
+	}
+</style>

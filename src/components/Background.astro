@@ -68,10 +68,33 @@
             cx.clearRect(0, 0, c.width, c.height);
 
             var grad = cx.createLinearGradient(0, 0, 0, c.height);
-            grad.addColorStop(0, '#06061a');
-            grad.addColorStop(0.6, '#0f1128');
-            grad.addColorStop(1, '#0a0d14');
+            // Kuromu night — richer mist veil
+            grad.addColorStop(0, '#0a0e20');
+            grad.addColorStop(0.35, '#12182e');
+            grad.addColorStop(0.7, '#0e1224');
+            grad.addColorStop(1, '#090b14');
             cx.fillStyle = grad;
+            cx.fillRect(0, 0, c.width, c.height);
+
+            // vivid nebulae (mist blue + lilac + bone wash)
+            var nebula1 = cx.createRadialGradient(c.width * 0.78, c.height * 0.12, 0, c.width * 0.78, c.height * 0.12, c.width * 0.48);
+            nebula1.addColorStop(0, 'rgba(144,158,200,0.28)');
+            nebula1.addColorStop(0.45, 'rgba(144,158,200,0.10)');
+            nebula1.addColorStop(1, 'rgba(144,158,200,0)');
+            cx.fillStyle = nebula1;
+            cx.fillRect(0, 0, c.width, c.height);
+
+            var nebula2 = cx.createRadialGradient(c.width * 0.16, c.height * 0.74, 0, c.width * 0.16, c.height * 0.74, c.width * 0.42);
+            nebula2.addColorStop(0, 'rgba(201,160,220,0.22)');
+            nebula2.addColorStop(0.5, 'rgba(201,160,220,0.08)');
+            nebula2.addColorStop(1, 'rgba(201,160,220,0)');
+            cx.fillStyle = nebula2;
+            cx.fillRect(0, 0, c.width, c.height);
+
+            var nebula3 = cx.createRadialGradient(c.width * 0.52, c.height * 0.42, 0, c.width * 0.52, c.height * 0.42, c.width * 0.32);
+            nebula3.addColorStop(0, 'rgba(232,238,248,0.06)');
+            nebula3.addColorStop(1, 'rgba(232,238,248,0)');
+            cx.fillStyle = nebula3;
             cx.fillRect(0, 0, c.width, c.height);
 
             var t = now * 0.001;
@@ -82,19 +105,25 @@
                 var twinkle = Math.sin(t * s.twinkleSpeed + s.twinkleOffset);
                 s.alpha = s.baseAlpha * (0.6 + 0.4 * twinkle);
 
+                // tint: mostly bone-white, some mist-blue / lilac sparks
+                var tint = s.twinkleOffset % 3;
+                var cr = 232, cg = 238, cb = 248;
+                if (tint < 1) { cr = 170; cg = 184; cb = 221; }
+                else if (tint < 2) { cr = 201; cg = 180; cb = 220; }
+
                 if (s.r > 1.2) {
                     cx.beginPath();
-                    cx.arc(s.x, s.y, s.r * 3, 0, Math.PI * 2);
-                    var glow = cx.createRadialGradient(s.x, s.y, 0, s.x, s.y, s.r * 3);
-                    glow.addColorStop(0, 'rgba(180,200,255,' + (s.alpha * 0.3) + ')');
-                    glow.addColorStop(1, 'rgba(180,200,255,0)');
+                    cx.arc(s.x, s.y, s.r * 3.6, 0, Math.PI * 2);
+                    var glow = cx.createRadialGradient(s.x, s.y, 0, s.x, s.y, s.r * 3.6);
+                    glow.addColorStop(0, 'rgba(' + cr + ',' + cg + ',' + cb + ',' + (s.alpha * 0.55) + ')');
+                    glow.addColorStop(1, 'rgba(' + cr + ',' + cg + ',' + cb + ',0)');
                     cx.fillStyle = glow;
                     cx.fill();
                 }
 
                 cx.beginPath();
                 cx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
-                cx.fillStyle = 'rgba(255,255,255,' + s.alpha + ')';
+                cx.fillStyle = 'rgba(' + cr + ',' + cg + ',' + cb + ',' + s.alpha + ')';
                 cx.fill();
             }
 

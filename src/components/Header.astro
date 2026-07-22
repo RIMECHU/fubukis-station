@@ -36,7 +36,7 @@ const items = [
 ---
 
 <nav
-	class="header-nav fixed top-0 left-0 right-0 z-[50] w-full bg-[color:var(--color-background)] transition-transform duration-300 ease-in-out"
+	class="header-nav fixed top-0 left-0 right-0 z-[50] w-full transition-transform duration-300 ease-in-out"
 	data-open="false"
 	data-scroll-direction="up"
 >
@@ -44,7 +44,6 @@ const items = [
 		<a class="brand font-extrabold text-xl no-underline" href={localized('/')} aria-label={SITE_TITLE}>
 				<span class="brand-prompt" aria-hidden="true">$</span>
 				<span class="brand-name">{t('common.brand')}</span>
-				<span class="brand-cursor" aria-hidden="true"></span>
 				<span class="brand-skull" aria-hidden="true">
 					<svg viewBox="-19 -18 38 37" xmlns="http://www.w3.org/2000/svg">
 						<path d="M0,-16 C-11,-16 -17,-9 -17,0 C-17,6 -14,10 -10,12 L-10,17 L-5,17 L-5,13 L0,13 L0,17 L5,17 L5,13 L10,13 L10,17 L10,12 C14,10 17,6 17,0 C17,-9 11,-16 0,-16 Z" fill="#e8eef8"/>
@@ -61,7 +60,7 @@ const items = [
 
 		<ul
 			id="primary-nav"
-			class="nav-list hidden flex-col absolute left-0 right-0 top-full z-[40] p-4 gap-0 bg-[color:var(--color-background)] shadow-xl opacity-0 pointer-events-none transition-all duration-200 ease-out sm:static sm:flex sm:flex-row sm:items-center sm:gap-4 sm:p-0 sm:opacity-100 sm:pointer-events-auto sm:shadow-none"
+			class="nav-list hidden flex-col absolute left-0 right-0 top-full z-[40] p-4 gap-0 opacity-0 pointer-events-none transition-all duration-200 ease-out sm:static sm:flex sm:flex-row sm:items-center sm:gap-4 sm:p-0 sm:opacity-100 sm:pointer-events-auto sm:shadow-none sm:bg-transparent"
 		>
 			{items.map((item, index) => (
 				<>
@@ -128,9 +127,24 @@ const items = [
 
 <style>
 	.header-nav {
-		border-bottom: 1px solid color-mix(in srgb, var(--color-foreground) 10%, transparent);
-		backdrop-filter: blur(10px);
-		background: color-mix(in srgb, var(--color-background) 95%, transparent);
+		--nav-mist: #909ec8;
+		--nav-lilac: #c9a0dc;
+		--nav-bone: #e8eef8;
+		--nav-ink: #0a0e1a;
+		border-bottom: 1px solid color-mix(in srgb, var(--nav-mist) 28%, transparent);
+		background:
+			linear-gradient(
+				180deg,
+				color-mix(in srgb, var(--nav-mist) 14%, transparent) 0%,
+				color-mix(in srgb, var(--nav-lilac) 8%, transparent) 42%,
+				color-mix(in srgb, var(--nav-ink) 72%, transparent) 100%
+			),
+			color-mix(in srgb, var(--color-background) 78%, transparent);
+		backdrop-filter: blur(16px) saturate(1.25);
+		-webkit-backdrop-filter: blur(16px) saturate(1.25);
+		box-shadow:
+			0 8px 28px color-mix(in srgb, var(--nav-ink) 35%, transparent),
+			inset 0 1px 0 color-mix(in srgb, var(--nav-bone) 10%, transparent);
 	}
 
 	.header-nav[data-scroll-direction="down"] {
@@ -172,7 +186,7 @@ const items = [
 		}
 	}
 
-	/* ── Brand: Kuromu gothic wordmark + cursor + skull ── */
+	/* ── Brand: Kuromu gothic wordmark + skull ── */
 	.brand {
 		display: inline-flex;
 		align-items: center;
@@ -185,6 +199,13 @@ const items = [
 		font-weight: 700;
 		color: var(--color-primary);
 		text-shadow: 0 0 10px color-mix(in srgb, var(--color-primary) 45%, transparent);
+		transition: text-shadow 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+	}
+
+	.brand:hover .brand-prompt {
+		text-shadow:
+			0 0 12px color-mix(in srgb, var(--color-primary) 55%, transparent),
+			0 0 22px color-mix(in srgb, #c9a0dc 28%, transparent);
 	}
 
 	.brand-name {
@@ -201,27 +222,27 @@ const items = [
 			#909ec8 72%,
 			#6b7aa8 100%
 		);
+		background-size: 100% 140%;
+		background-position: 50% 0%;
 		-webkit-background-clip: text;
 		background-clip: text;
 		-webkit-text-fill-color: transparent;
-		filter: drop-shadow(0 0 8px color-mix(in srgb, var(--color-primary) 45%, transparent));
-		transition: filter 0.25s ease;
+		/* keep 2 layers always so filter interpolates smoothly */
+		filter:
+			drop-shadow(0 0 5px color-mix(in srgb, var(--color-primary) 32%, transparent))
+			drop-shadow(0 0 14px color-mix(in srgb, #c9a0dc 0%, transparent));
+		transition:
+			filter 0.55s cubic-bezier(0.22, 1, 0.36, 1),
+			background-position 0.55s cubic-bezier(0.22, 1, 0.36, 1),
+			letter-spacing 0.55s cubic-bezier(0.22, 1, 0.36, 1);
 	}
 
-	.brand:hover .brand-cursor {
-		animation-duration: 0.45s;
-	}
-
-	.brand-cursor {
-		width: 0.45em;
-		height: 0.95em;
-		background: linear-gradient(180deg, #c3cfec 0%, #909ec8 100%);
-		box-shadow: 0 0 10px color-mix(in srgb, var(--color-primary) 55%, transparent);
-		animation: brandBlink 1.1s step-end infinite;
-	}
-
-	@keyframes brandBlink {
-		50% { opacity: 0; }
+	.brand:hover .brand-name {
+		background-position: 50% 100%;
+		letter-spacing: 0.055em;
+		filter:
+			drop-shadow(0 0 8px color-mix(in srgb, var(--color-primary) 48%, transparent))
+			drop-shadow(0 0 18px color-mix(in srgb, #c9a0dc 28%, transparent));
 	}
 
 	/* ── Brand skull buddy ── */
@@ -229,7 +250,8 @@ const items = [
 		display: inline-flex;
 		width: 0.9em;
 		margin-left: 0.08rem;
-		filter: drop-shadow(0 0 7px color-mix(in srgb, var(--color-primary) 45%, transparent));
+		filter: drop-shadow(0 0 6px color-mix(in srgb, var(--color-primary) 38%, transparent));
+		transition: filter 0.55s cubic-bezier(0.22, 1, 0.36, 1), transform 0.55s cubic-bezier(0.22, 1, 0.36, 1);
 	}
 
 	.brand-skull svg {
@@ -243,14 +265,11 @@ const items = [
 		50%      { transform: translateY(-12%) rotate(7deg); }
 	}
 
-	/* Brand hover: name glows harder, skull gets excited */
-	.brand:hover .brand-name {
-		filter: drop-shadow(0 0 14px color-mix(in srgb, var(--color-primary) 70%, transparent))
-			drop-shadow(0 0 22px color-mix(in srgb, #c9a0dc 35%, transparent));
-	}
-
-	.brand:hover .brand-skull svg {
-		animation-duration: 0.9s;
+	.brand:hover .brand-skull {
+		filter:
+			drop-shadow(0 0 9px color-mix(in srgb, var(--color-primary) 52%, transparent))
+			drop-shadow(0 0 16px color-mix(in srgb, #c9a0dc 30%, transparent));
+		transform: translateY(-1px);
 	}
 
 	/* Nav links: glow on hover */
@@ -310,23 +329,41 @@ const items = [
 			drop-shadow(0 0 14px color-mix(in srgb, #c9a0dc 35%, transparent));
 	}
 
-	/* Subtle horizon glow line under the navbar */
+	/* Horizon glow — mist → lilac veil under navbar */
+	.header-nav::before {
+		content: '';
+		position: absolute;
+		inset: 0;
+		pointer-events: none;
+		background:
+			radial-gradient(ellipse 55% 120% at 12% 0%, color-mix(in srgb, var(--nav-mist) 18%, transparent), transparent 70%),
+			radial-gradient(ellipse 45% 100% at 88% 0%, color-mix(in srgb, var(--nav-lilac) 14%, transparent), transparent 68%);
+		opacity: 0.9;
+	}
+
 	.header-nav::after {
 		content: '';
 		position: absolute;
 		left: 0;
 		right: 0;
 		bottom: -1px;
-		height: 1px;
+		height: 2px;
 		background: linear-gradient(90deg,
 			transparent 0%,
-			color-mix(in srgb, var(--color-primary) 32%, transparent) 50%,
+			color-mix(in srgb, var(--nav-mist) 55%, transparent) 22%,
+			color-mix(in srgb, var(--nav-lilac) 70%, transparent) 50%,
+			color-mix(in srgb, var(--nav-mist) 55%, transparent) 78%,
 			transparent 100%);
+		box-shadow: 0 0 16px color-mix(in srgb, var(--nav-lilac) 35%, transparent);
 		pointer-events: none;
 	}
 
+	.nav-container {
+		position: relative;
+		z-index: 1;
+	}
+
 	@media (prefers-reduced-motion: reduce) {
-		.brand-cursor,
 		.brand-skull svg,
 		.nav-link:hover,
 		.nav-link:focus-visible {
@@ -459,6 +496,20 @@ const items = [
 		display: flex;
 		opacity: 1;
 		pointer-events: auto;
+		background:
+			linear-gradient(
+				180deg,
+				color-mix(in srgb, var(--nav-mist) 16%, transparent),
+				color-mix(in srgb, var(--nav-lilac) 10%, transparent) 40%,
+				color-mix(in srgb, var(--nav-ink) 82%, transparent)
+			),
+			color-mix(in srgb, var(--color-background) 88%, transparent);
+		backdrop-filter: blur(18px) saturate(1.2);
+		-webkit-backdrop-filter: blur(18px) saturate(1.2);
+		border-bottom: 1px solid color-mix(in srgb, var(--nav-mist) 30%, transparent);
+		box-shadow:
+			0 16px 36px color-mix(in srgb, var(--nav-ink) 45%, transparent),
+			inset 0 1px 0 color-mix(in srgb, var(--nav-bone) 8%, transparent);
 	}
 
 	[data-open='true'] .menu-closed {
@@ -476,8 +527,19 @@ const items = [
 		}
 
 		.nav-list li {
+			opacity: 1;
+			transform: none;
+			transition: none;
 			width: auto;
 			border-bottom: none;
+		}
+
+		[data-open='true'] .nav-list {
+			background: transparent;
+			backdrop-filter: none;
+			-webkit-backdrop-filter: none;
+			border-bottom: none;
+			box-shadow: none;
 		}
 
 		.theme-selector-li,

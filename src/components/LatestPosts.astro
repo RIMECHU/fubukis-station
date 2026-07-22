@@ -1,7 +1,7 @@
 ---
 /**
  * LatestPosts Component
- * Displays latest blog posts with refined card styling
+ * Kuromu night styling — mist blue / lilac accents, gothic titles
  */
 
 import FormattedDate from './FormattedDate.astro';
@@ -20,7 +20,7 @@ const { posts, lang, layout = 'list' } = Astro.props;
 ---
 
 <div class:list={['post-list', { 'post-list-grid': layout === 'grid' }]}>
-	{posts.map((post, i) => (
+	{posts.map((post) => (
 		<a
 			href={lang ? getRelativeLocaleUrl(lang, `/blog/${getPostBaseId(post)}/`) : `/blog/${getPostBaseId(post)}/`}
 			class="post-card"
@@ -43,7 +43,7 @@ const { posts, lang, layout = 'list' } = Astro.props;
 					))}
 				</div>
 			)}
-			<span class="post-card-arrow">→</span>
+			<span class="post-card-arrow" aria-hidden="true">→</span>
 		</a>
 	))}
 </div>
@@ -52,7 +52,7 @@ const { posts, lang, layout = 'list' } = Astro.props;
 	.post-list {
 		display: flex;
 		flex-direction: column;
-		gap: 0.5rem;
+		gap: 0.55rem;
 	}
 
 	@media (min-width: 768px) {
@@ -64,16 +64,30 @@ const { posts, lang, layout = 'list' } = Astro.props;
 	}
 
 	.post-card {
+		--mist: #909ec8;
+		--lilac: #c9a0dc;
+		--bone: #e8eef8;
 		display: flex;
 		flex-direction: column;
 		align-items: stretch;
-		gap: 0.35rem;
-		padding: 0.85rem 1.75rem 0.85rem 1rem;
+		gap: 0.4rem;
+		padding: 0.9rem 1.7rem 0.9rem 1rem;
 		text-decoration: none;
-		border: 1px solid color-mix(in srgb, var(--color-foreground) 10%, transparent);
+		border: 1px solid color-mix(in srgb, var(--mist) 42%, transparent);
 		border-radius: 10px;
-		background: color-mix(in srgb, var(--color-background) 98%, transparent);
-		transition: all 0.2s ease;
+		background:
+			linear-gradient(145deg,
+				color-mix(in srgb, var(--mist) 18%, transparent),
+				color-mix(in srgb, var(--lilac) 12%, transparent) 55%,
+				color-mix(in srgb, var(--color-background) 82%, transparent));
+		box-shadow:
+			0 2px 14px color-mix(in srgb, var(--mist) 12%, transparent),
+			inset 0 1px 0 color-mix(in srgb, var(--bone) 12%, transparent);
+		transition:
+			border-color 0.22s ease,
+			box-shadow 0.22s ease,
+			transform 0.22s ease,
+			background 0.22s ease;
 		position: relative;
 		overflow: hidden;
 	}
@@ -81,29 +95,35 @@ const { posts, lang, layout = 'list' } = Astro.props;
 	.post-card::before {
 		content: '';
 		position: absolute;
-		inset: 0;
-		border-radius: inherit;
-		background: linear-gradient(135deg,
-			color-mix(in srgb, var(--color-primary) 0%, transparent) 0%,
-			color-mix(in srgb, var(--color-primary) 3%, transparent) 100%);
-		opacity: 0;
-		transition: opacity 0.25s ease;
+		left: 0;
+		top: 0.55rem;
+		bottom: 0.55rem;
+		width: 2px;
+		border-radius: 2px;
+		background: linear-gradient(180deg, var(--mist), var(--lilac));
+		opacity: 0.7;
+		box-shadow: 0 0 8px color-mix(in srgb, var(--lilac) 40%, transparent);
+		transition: opacity 0.22s ease, box-shadow 0.22s ease;
 	}
 
 	.post-card:hover {
-		border-color: color-mix(in srgb, var(--color-primary) 40%, transparent);
-		transform: translateX(4px);
-		box-shadow: 0 2px 12px color-mix(in srgb, var(--color-primary) 8%, transparent);
+		border-color: color-mix(in srgb, var(--mist) 70%, var(--lilac));
+		transform: translateY(-2px);
+		box-shadow:
+			0 8px 28px color-mix(in srgb, var(--mist) 28%, transparent),
+			0 0 26px color-mix(in srgb, var(--lilac) 20%, transparent),
+			inset 0 1px 0 color-mix(in srgb, var(--bone) 16%, transparent);
 	}
 
 	.post-card:hover::before {
 		opacity: 1;
+		box-shadow: 0 0 14px color-mix(in srgb, var(--lilac) 75%, transparent);
 	}
 
 	.post-card:focus-visible {
 		outline: none;
-		border-color: var(--color-primary);
-		box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-primary) 25%, transparent);
+		border-color: var(--mist);
+		box-shadow: 0 0 0 2px color-mix(in srgb, var(--mist) 28%, transparent);
 	}
 
 	.post-card-header {
@@ -112,6 +132,7 @@ const { posts, lang, layout = 'list' } = Astro.props;
 		gap: 0.2rem;
 		position: relative;
 		z-index: 1;
+		padding-left: 0.35rem;
 	}
 
 	@media (min-width: 640px) {
@@ -125,22 +146,24 @@ const { posts, lang, layout = 'list' } = Astro.props;
 
 	.post-card-title {
 		margin: 0;
-		font-size: 0.95rem;
+		font-size: 0.98rem;
 		font-weight: 700;
 		font-family: var(--font-display);
-		letter-spacing: 0.02em;
-		color: var(--color-foreground);
+		letter-spacing: 0.03em;
+		color: #f2f5fc;
 		line-height: 1.35;
-		transition: color 0.2s ease;
+		text-shadow: 0 0 14px color-mix(in srgb, var(--mist) 40%, transparent);
+		transition: color 0.2s ease, text-shadow 0.2s ease;
 	}
 
 	.post-card:hover .post-card-title {
-		color: var(--color-primary);
+		color: #e0c4f0;
+		text-shadow: 0 0 18px color-mix(in srgb, var(--lilac) 55%, transparent);
 	}
 
 	.post-card-date {
 		font-size: 0.7rem;
-		color: color-mix(in srgb, var(--color-foreground) 45%, transparent);
+		color: #aab8dd;
 		font-family: var(--font-mono, monospace);
 		white-space: nowrap;
 		flex-shrink: 0;
@@ -148,10 +171,11 @@ const { posts, lang, layout = 'list' } = Astro.props;
 
 	.post-card-desc {
 		margin: 0;
+		padding-left: 0.35rem;
 		font-size: 0.78rem;
 		font-family: var(--font-sans, sans-serif);
-		color: color-mix(in srgb, var(--color-foreground) 60%, transparent);
-		line-height: 1.5;
+		color: color-mix(in srgb, var(--bone) 78%, transparent);
+		line-height: 1.55;
 		display: -webkit-box;
 		-webkit-line-clamp: 2;
 		-webkit-box-orient: vertical;
@@ -164,20 +188,23 @@ const { posts, lang, layout = 'list' } = Astro.props;
 		display: flex;
 		flex-wrap: wrap;
 		gap: 0.35rem;
-		margin-top: 0.15rem;
+		margin-top: 0.1rem;
+		padding-left: 0.35rem;
 		position: relative;
 		z-index: 1;
 	}
 
 	.post-tag {
 		display: inline-block;
-		padding: 0.12rem 0.5rem;
-		font-size: 0.7rem;
+		padding: 0.12rem 0.55rem;
+		font-size: 0.68rem;
 		font-family: var(--font-mono, monospace);
-		color: color-mix(in srgb, var(--color-primary) 90%, transparent);
-		background: color-mix(in srgb, var(--color-primary) 10%, transparent);
-		border: 1px solid color-mix(in srgb, var(--color-primary) 20%, transparent);
+		letter-spacing: 0.02em;
+		color: #e8eef8;
+		background: color-mix(in srgb, var(--mist) 24%, var(--lilac));
+		border: 1px solid color-mix(in srgb, var(--mist) 55%, var(--lilac));
 		border-radius: 999px;
+		box-shadow: 0 0 12px color-mix(in srgb, var(--lilac) 28%, transparent);
 	}
 
 	.post-card-arrow {
@@ -185,7 +212,7 @@ const { posts, lang, layout = 'list' } = Astro.props;
 		right: 0.9rem;
 		top: 50%;
 		font-size: 0.9rem;
-		color: color-mix(in srgb, var(--color-foreground) 20%, transparent);
+		color: color-mix(in srgb, var(--mist) 35%, transparent);
 		opacity: 0;
 		transform: translateY(-50%) translateX(-6px);
 		transition: all 0.25s ease;
@@ -195,7 +222,8 @@ const { posts, lang, layout = 'list' } = Astro.props;
 	.post-card:hover .post-card-arrow {
 		opacity: 1;
 		transform: translateY(-50%) translateX(0);
-		color: var(--color-primary);
+		color: var(--lilac);
+		text-shadow: 0 0 8px color-mix(in srgb, var(--lilac) 50%, transparent);
 	}
 
 	@media (max-width: 639px) {
