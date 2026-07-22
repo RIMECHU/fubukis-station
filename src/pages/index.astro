@@ -41,18 +41,18 @@ const t = useTranslations(lang);
 >
     <OpeningAnimation slot="overlay" />
 
-    <!-- Decorative floating doodles + glow blobs (nova.gal-inspired, terminal-flavored) -->
+    <!-- Decorative floating doodles + glow blobs (Yano Kuromu night style) -->
     <div class="doodles" aria-hidden="true">
         <span class="glow g1"></span>
         <span class="glow g2"></span>
         <span class="doodle" style="--x:5%;  --y:24%; --d:14s; --dl:0s;  --r:-12deg;">$</span>
         <span class="doodle" style="--x:91%; --y:16%; --d:17s; --dl:-4s; --r:10deg;">&gt;</span>
-        <span class="doodle" style="--x:86%; --y:72%; --d:15s; --dl:-8s; --r:14deg;">~</span>
+        <span class="doodle" style="--x:86%; --y:72%; --d:15s; --dl:-8s; --r:14deg;">☾</span>
         <span class="doodle" style="--x:8%;  --y:80%; --d:19s; --dl:-2s; --r:-8deg;">❯</span>
-        <span class="doodle" style="--x:47%; --y:9%;  --d:16s; --dl:-6s; --r:6deg;">;</span>
-        <span class="petal-d" style="--x:72%; --y:42%; --d:18s; --dl:-3s;"></span>
-        <span class="petal-d" style="--x:18%; --y:54%; --d:21s; --dl:-9s;"></span>
-        <span class="petal-d" style="--x:56%; --y:88%; --d:16s; --dl:-5s;"></span>
+        <span class="doodle" style="--x:47%; --y:9%;  --d:16s; --dl:-6s; --r:6deg;">✦</span>
+        <span class="skull-d" style="--x:72%; --y:42%; --d:18s; --dl:-3s; --r:8deg;"></span>
+        <span class="skull-d" style="--x:18%; --y:54%; --d:21s; --dl:-9s; --r:-10deg;"></span>
+        <span class="skull-d" style="--x:56%; --y:88%; --d:16s; --dl:-5s; --r:5deg;"></span>
     </div>
 
     <div class="layout">
@@ -77,7 +77,7 @@ const t = useTranslations(lang);
                         <h1 class="name">{USER_NAME}</h1>
                         <p class="tagline">{SITE_DESCRIPTION}</p>
                     </div>
-                    <span class="hero-sticker" aria-hidden="true">吹雪降臨！</span>
+                    <span class="hero-sticker" aria-hidden="true">夜乃くろむ！</span>
                 </div>
             </div>
 
@@ -374,14 +374,14 @@ const t = useTranslations(lang);
         color: color-mix(in srgb, var(--color-primary) 20%, transparent);
         animation: doodleFloat var(--d) ease-in-out var(--dl) infinite alternate;
     }
-    .petal-d {
+    .skull-d {
         position: absolute;
         left: var(--x);
         top: var(--y);
-        width: 13px;
-        height: 17px;
-        background: color-mix(in srgb, #ffb7c5 28%, transparent);
-        border-radius: 65% 35% 60% 40%;
+        width: 22px;
+        height: 22px;
+        opacity: 0.5;
+        background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='-19 -18 38 37'%3E%3Cpath d='M0,-16 C-11,-16 -17,-9 -17,0 C-17,6 -14,10 -10,12 L-10,17 L-5,17 L-5,13 L0,13 L0,17 L5,17 L5,13 L10,13 L10,17 L10,12 C14,10 17,6 17,0 C17,-9 11,-16 0,-16 Z' fill='%23aab8dd'/%3E%3Ccircle cx='-6' cy='0' r='4' fill='%230a0e1a'/%3E%3Ccircle cx='6' cy='0' r='4' fill='%230a0e1a'/%3E%3C/svg%3E") center/contain no-repeat;
         animation: doodleFloat var(--d) ease-in-out var(--dl) infinite alternate;
     }
     @keyframes doodleFloat {
@@ -390,7 +390,7 @@ const t = useTranslations(lang);
     }
     @media (prefers-reduced-motion: reduce) {
         .doodle,
-        .petal-d,
+        .skull-d,
         .hero-sticker {
             animation: none;
         }
@@ -403,7 +403,9 @@ const t = useTranslations(lang);
         width: 88px;
         height: 88px;
         border-radius: 999px;
-        border: 2px solid color-mix(in srgb, var(--color-primary) 40%, transparent);
+        border: 2.5px solid color-mix(in srgb, var(--color-primary) 55%, transparent);
+        outline: 2px dashed color-mix(in srgb, var(--color-primary) 30%, transparent);
+        outline-offset: 4px;
         box-shadow: 0 0 24px color-mix(in srgb, var(--color-primary) 18%, transparent);
         object-fit: cover;
         display: block;
@@ -444,28 +446,43 @@ const t = useTranslations(lang);
         color: color-mix(in srgb, var(--color-foreground) 55%, transparent);
     }
 
-    /* ── Terminal ── */
+    /* ── Terminal (Kuromu night-blue borders) ── */
     .terminal {
-        border: 1px solid color-mix(in srgb, var(--color-foreground) 10%, transparent);
-        border-radius: 10px;
+        border: 1px solid color-mix(in srgb, var(--color-primary) 22%, transparent);
+        border-radius: 14px;
         overflow: hidden;
         font-family: var(--font-mono, monospace);
         font-size: 0.85rem;
+        background: color-mix(in srgb, var(--color-primary) 3%, transparent);
+        box-shadow:
+            0 2px 16px color-mix(in srgb, var(--color-primary) 7%, transparent),
+            inset 0 1px 0 color-mix(in srgb, var(--color-primary) 10%, transparent);
+        transition:
+            border-color 0.25s ease,
+            box-shadow 0.25s ease,
+            transform 0.25s ease;
+    }
+    .terminal:hover {
+        border-color: color-mix(in srgb, var(--color-primary) 45%, transparent);
+        box-shadow:
+            0 6px 28px color-mix(in srgb, var(--color-primary) 14%, transparent),
+            inset 0 1px 0 color-mix(in srgb, var(--color-primary) 16%, transparent);
+        transform: translateY(-2px);
     }
     .term-bar {
         display: flex;
         align-items: center;
         gap: 0.35rem;
         padding: 0.45rem 0.75rem;
-        background: color-mix(in srgb, var(--color-foreground) 5%, transparent);
-        border-bottom: 1px solid color-mix(in srgb, var(--color-foreground) 8%, transparent);
+        background: color-mix(in srgb, var(--color-primary) 8%, transparent);
+        border-bottom: 1px solid color-mix(in srgb, var(--color-primary) 16%, transparent);
     }
     .term-label {
         margin-left: auto;
         font-size: 0.72rem;
         text-transform: uppercase;
         letter-spacing: 0.06em;
-        color: color-mix(in srgb, var(--color-foreground) 40%, transparent);
+        color: color-mix(in srgb, var(--color-primary) 65%, transparent);
     }
     .dot { width: 9px; height: 9px; border-radius: 999px; }
     .dot.red    { background: #ff5f56; }
@@ -489,7 +506,7 @@ const t = useTranslations(lang);
     .term-out {
         color: color-mix(in srgb, var(--color-foreground) 75%, transparent);
         padding-left: 0.5rem;
-        border-left: 2px solid color-mix(in srgb, var(--color-primary) 35%, transparent);
+        border-left: 2px dashed color-mix(in srgb, var(--color-primary) 40%, transparent);
     }
     .status-rotator {
         display: inline-block;
@@ -554,16 +571,18 @@ const t = useTranslations(lang);
         display: inline-flex;
         align-items: center;
         gap: 0.5rem;
-        padding: 0.4rem 0.75rem;
-        border: 1px solid color-mix(in srgb, var(--color-foreground) 10%, transparent);
-        border-radius: 8px;
+        padding: 0.4rem 0.9rem;
+        border: 1px solid color-mix(in srgb, var(--color-primary) 25%, transparent);
+        border-radius: 999px;
         color: var(--color-foreground);
         text-decoration: none;
         font-size: 0.9rem;
-        transition: border-color 0.15s, background 0.15s;
+        transition: border-color 0.2s, background 0.2s, box-shadow 0.2s, transform 0.2s;
     }
     .social-link:hover {
         border-color: var(--color-primary);
-        background: color-mix(in srgb, var(--color-primary) 6%, transparent);
+        background: color-mix(in srgb, var(--color-primary) 10%, transparent);
+        box-shadow: 0 0 16px color-mix(in srgb, var(--color-primary) 25%, transparent);
+        transform: translateY(-1px);
     }
 </style>

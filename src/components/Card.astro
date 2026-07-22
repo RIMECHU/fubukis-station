@@ -1,7 +1,7 @@
 ---
 /**
  * Card Component
- * Base card component with Spectre styling
+ * Base card component with Kuromu night-blue styling
  */
 
 interface Props {
@@ -12,8 +12,30 @@ const { class: className } = Astro.props;
 ---
 
 <div class:list={[
-	'border border-accent/40 bg-background p-3 md:p-6',
+	'card bg-background p-3 md:p-6',
 	className
 ]}>
 	<slot />
 </div>
+
+<style>
+	.card {
+		border: 1px solid color-mix(in srgb, var(--color-primary) 22%, transparent);
+		border-radius: 14px;
+		box-shadow:
+			0 2px 16px color-mix(in srgb, var(--color-primary) 7%, transparent),
+			inset 0 1px 0 color-mix(in srgb, var(--color-primary) 10%, transparent);
+		transition:
+			border-color 0.25s ease,
+			box-shadow 0.25s ease,
+			transform 0.25s ease;
+	}
+
+	.card:hover {
+		border-color: color-mix(in srgb, var(--color-primary) 45%, transparent);
+		box-shadow:
+			0 6px 28px color-mix(in srgb, var(--color-primary) 14%, transparent),
+			inset 0 1px 0 color-mix(in srgb, var(--color-primary) 16%, transparent);
+		transform: translateY(-2px);
+	}
+</style>
