@@ -65,5 +65,11 @@ export default defineConfig({
       viteCompression({ algorithm: 'brotliCompress' }),
       viteCompression({ algorithm: 'gzip' }),
     ],
+    // Ignore Visual Studio workspace files to avoid EBUSY watcher errors on Windows
+    server: {
+      watch: {
+        ignored: ['**/.vs/**'],
+      },
+    },
   },
 });
