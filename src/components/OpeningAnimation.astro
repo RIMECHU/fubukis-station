@@ -196,7 +196,7 @@
     <div id="intro-content" class="absolute inset-0 z-30 flex flex-col items-center justify-center">
         <div class="logo-line">
             <span class="logo-prompt" aria-hidden="true">$</span>
-            <h1 id="logo-text" data-value="fubuki" aria-label="fubuki"></h1>
+            <h1 id="logo-text" data-value="kuromu" aria-label="kuromu"></h1>
             <span class="logo-cursor" aria-hidden="true"></span>
         </div>
         <div id="logo-underline"></div>
@@ -361,7 +361,7 @@
         for (let i = 0; i < FG_COUNT; i++) spawn(true);
 
         // ── Logo: terminal typewriter reveal ──
-        const finalText = logoText.dataset.value || 'fubuki';
+        const finalText = logoText.dataset.value || 'kuromu';
         const letterEls: HTMLElement[] = [];
         logoText.innerHTML = '';
         finalText.split('').forEach((ch) => {
