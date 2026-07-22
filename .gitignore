@@ -29,6 +29,12 @@ pnpm-debug.log*
 # jetbrains setting folder
 .idea/
 
+# Visual Studio workspace files
+.vs/
+
+# local review screenshots
+_review/
+
 # Tencent Cloud EdgeOne
 .env
 .edgeone/*
