@@ -132,7 +132,7 @@ const t = useTranslations(lang);
                         </div>
                         <div class="term-row">
                             <span class="term-prompt">$ uptime</span>
-                            <span class="term-out">{fill(t('home.uptime'), uptimeDays)}</span>
+                            <span class="term-out uptime-live" data-launch={launchTs} data-tpl={t('home.uptime')}>{fill(t('home.uptime'), uptimeDays)}</span>
                         </div>
                         <div class="term-row">
                             <span class="term-prompt">$ posts</span>
@@ -253,19 +253,37 @@ const t = useTranslations(lang);
     // Status rotator — survives ClientRouter swaps, one interval at a time
     document.addEventListener('astro:page-load', function() {
         var el = document.querySelector('.status-rotator');
-        if (!el) return;
-        var values = (el.getAttribute('data-values') || '').split('|').filter(Boolean);
-        if (values.length < 2) return;
-        if (window.__statusRotTimer) clearInterval(window.__statusRotTimer);
-        var i = 0;
-        window.__statusRotTimer = setInterval(function() {
-            i = (i + 1) % values.length;
-            el.style.opacity = '0';
-            setTimeout(function() {
-                el.textContent = values[i];
-                el.style.opacity = '1';
-            }, 250);
-        }, 4000);
+        if (el) {
+            var values = (el.getAttribute('data-values') || '').split('|').filter(Boolean);
+            if (values.length >= 2) {
+                if (window.__statusRotTimer) clearInterval(window.__statusRotTimer);
+                var i = 0;
+                window.__statusRotTimer = setInterval(function() {
+                    i = (i + 1) % values.length;
+                    el.style.opacity = '0';
+                    setTimeout(function() {
+                        el.textContent = values[i];
+                        el.style.opacity = '1';
+                    }, 250);
+                }, 4000);
+            }
+        }
+
+        // Live uptime — computed in the browser so the day count ticks up
+        // without needing a rebuild/redeploy. Re-checked hourly so an open
+        // tab rolls over at midnight too.
+        var up = document.querySelector('.uptime-live');
+        if (up) {
+            var launch = Number(up.getAttribute('data-launch')) || Date.now();
+            var tpl = up.getAttribute('data-tpl') || 'online {n}d';
+            var renderUptime = function() {
+                var d = Math.max(1, Math.floor((Date.now() - launch) / 86400000));
+                up.textContent = tpl.replace('{n}', String(d));
+            };
+            renderUptime();
+            if (window.__uptimeTimer) clearInterval(window.__uptimeTimer);
+            window.__uptimeTimer = setInterval(renderUptime, 3600000);
+        }
     });
 </script>
 
